@@ -1,0 +1,28 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/nearbystores/nearbystores",
+    "pages/detail/detail",
+    "pages/center/center",
+    "pages/order/order",
+    "pages/orderDetail/orderDetail",
+    "pages/verify/verify",
+    "pages/login/login",
+    "pages/coupon/coupon",
+    "pages/setting/setting",
+    "pages/service/service",
+    "pages/cooperate/cooperate"
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "电击充电",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "小程序接口的位置展示"
+    }
+  },
+  "usingComponents": {}
+}

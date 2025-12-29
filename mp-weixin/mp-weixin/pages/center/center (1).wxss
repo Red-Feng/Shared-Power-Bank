@@ -1,0 +1,166 @@
+.centerContainer.data-v-3f122818 {
+  min-height: 100vh;
+  background-color: #ffffff;
+  padding-bottom: 40rpx;
+}
+
+/* 顶部用户信息区域 */
+.topHeader.data-v-3f122818 {
+  display: flex;
+  align-items: center;
+  padding: 60rpx 40rpx 40rpx 40rpx;
+  background-color: #ffffff;
+}
+
+.avatar.data-v-3f122818 {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background-color: #E3F2FD;
+  padding: 20rpx;
+  margin-right: 30rpx;
+}
+
+.userInfo.data-v-3f122818 {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.phoneNum.data-v-3f122818 {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #000000;
+  margin-bottom: 10rpx;
+}
+
+.userId.data-v-3f122818 {
+  font-size: 28rpx;
+  color: #64B5F6;
+}
+
+.topIcons.data-v-3f122818 {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.iconDot,
+.iconDash,
+.iconGear {
+  font-size: 32rpx;
+  color: #666666;
+}
+
+/* 押金和优惠券卡片区域 */
+.cardsSection.data-v-3f122818 {
+  display: flex;
+  gap: 20rpx;
+  padding: 0 40rpx 40rpx 40rpx;
+}
+
+.card.data-v-3f122818 {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 30rpx 20rpx;
+  border-radius: 20rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+}
+
+.depositCard.data-v-3f122818 {
+  background-color: #E3F2FD;
+}
+
+.couponCard.data-v-3f122818 {
+  background-color: #FFF9C4;
+}
+
+.cardIcon.data-v-3f122818 {
+  width: 60rpx;
+  height: 60rpx;
+  margin-right: 20rpx;
+}
+
+.cardText.data-v-3f122818 {
+  display: flex;
+  flex-direction: column;
+}
+
+.cardTitle.data-v-3f122818 {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #000000;
+  margin-bottom: 8rpx;
+}
+
+.cardValue.data-v-3f122818 {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #000000;
+}
+
+/* 我的服务区域 */
+.servicesSection.data-v-3f122818 {
+  padding: 40rpx;
+}
+
+.sectionTitle.data-v-3f122818 {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30rpx;
+}
+
+.titleBar.data-v-3f122818 {
+  width: 6rpx;
+  height: 32rpx;
+  background-color: #2196F3;
+  margin-right: 15rpx;
+  border-radius: 3rpx;
+}
+
+.titleText.data-v-3f122818 {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #000000;
+}
+
+/* 服务按钮网格 */
+.servicesGrid.data-v-3f122818 {
+  display: flex;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.serviceItem.data-v-3f122818 {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #ffffff;
+  border-radius: 16rpx;
+  padding: 30rpx 20rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+}
+
+.serviceIconWrapper.data-v-3f122818 {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 20rpx;
+  background-color: #E3F2FD;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20rpx;
+}
+
+.serviceIcon.data-v-3f122818 {
+  width: 60rpx;
+  height: 60rpx;
+}
+
+.serviceText.data-v-3f122818 {
+  font-size: 26rpx;
+  color: #000000;
+  font-weight: 500;
+}

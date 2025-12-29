@@ -1,0 +1,89 @@
+<view class="loginContainer">
+  <!-- 顶部装饰（返回按钮和右上角图标仅做样式，不实现功能） -->
+
+
+  <!-- 欢迎文案 -->
+  <view class="welcome">
+    <text class="hi">Hi，欢迎使用</text>
+    <text class="subText">非大陆、香港、澳门用户请通过平台手机号授权登录。</text>
+  </view>
+
+  <!-- 手机号输入行 -->
+  <view class="inputRow phoneRow">
+    <view class="areaSelect">
+      <text class="areaText">中国大陆</text>
+      <text class="areaArrow">▼</text>
+    </view>
+    <view class="divider"></view>
+    <input
+      class="phoneInput"
+      type="number"
+      maxlength="11"
+      placeholder="请输入手机号"
+      placeholder-class="placeholder"
+      value="{{phone}}"
+      bindinput="onPhoneInput"
+      bindblur="onPhoneBlur"
+    />
+  </view>
+  <view wx:if="{{phoneError}}" class="errorText">请输入正确的11位手机号</view>
+
+  <!-- 验证码输入行 -->
+  <view class="inputRow codeRow">
+    <input
+      class="codeInput"
+      type="digit"
+      maxlength="6"
+      placeholder="请输入验证码"
+      placeholder-class="placeholder"
+      value="{{code}}"
+      focus="{{codeInputFocus}}"
+      bindinput="onCodeInput"
+      bindblur="onCodeBlur"
+    />
+    <view class="divider"></view>
+    <button
+      class="codeBtn {{canSendCode ? 'codeBtnActive' : 'codeBtnDisabled'}}"
+      bindtap="onSendCode"
+      disabled="{{!canSendCode}}"
+    >
+      {{codeBtnText}}
+    </button>
+  </view>
+
+  <!-- 绑定按钮 -->
+  <view class="bindBtnWrapper">
+    <button
+      class="bindBtn {{canBind ? 'bindBtnActive' : 'bindBtnDisabled'}}"
+      bindtap="onBindPhone"
+      disabled="{{!canBind}}"
+    >
+      绑定手机号
+    </button>
+  </view>
+
+  <!-- 协议及说明文字 -->
+  <view class="agreement">
+	<view class="checkBoxRow" bindtap="onToggleCheckbox" style="line-height: 20px; font-size: 14px; display: flex; align-items: center;">
+	  <view class="checkbox {{isChecked ? 'checkboxChecked' : ''}}" style="display: inline-block; vertical-align: middle; width: 16px; height: 16px; margin-right: 6px; flex-shrink: 0;">
+	    <text wx:if="{{isChecked}}" class="checkIcon" style="display: block; text-align: center; line-height: 16px;">✓</text>
+	  </view>
+	  <!-- 文字：去掉style开头空格，和复选框紧挨着 -->
+	  <text class="agreeText" style="display: inline-block; vertical-align: middle;">
+	    我已阅读并同意<text class="link">《用户协议》</text>和<text class="link">《隐私政策》</text>
+	  </text>
+	</view>
+	
+
+    <view class="tips">
+      <text class="tipLine">
+        1. 若您已在其他渠道充值过押金，绑定手机号成功后，我们会在0-3个工作日内原路退回您当前账户的押金；
+      </text>
+      <text class="tipLine">
+        2. 若您已在其他渠道充值过余额，绑定手机号成功后，我们会将余额进行合并。
+      </text>
+    </view>
+  </view>
+</view>
+
+

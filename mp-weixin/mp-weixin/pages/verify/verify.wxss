@@ -1,0 +1,219 @@
+/**
+ * 这里是uni-app内置的常用样式变量
+ *
+ * uni-app 官方扩展插件及插件市场（https://ext.dcloud.net.cn）上很多三方插件均使用了这些样式变量
+ * 如果你是插件开发者，建议你使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ *
+ */
+/**
+ * 如果你是App开发者（插件使用者），你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ *
+ * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
+ */
+/* 颜色变量 */
+/* 行为相关颜色 */
+/* 文字基本颜色 */
+/* 背景颜色 */
+/* 边框颜色 */
+/* 尺寸变量 */
+/* 文字尺寸 */
+/* 图片尺寸 */
+/* Border Radius */
+/* 水平间距 */
+/* 垂直间距 */
+/* 透明度 */
+/* 文章场景相关 */
+.verifyContainer {
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.verifyContainer .content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20rpx;
+  background-color: #fff;
+  width: 60%;
+  border-radius: 30rpx;
+}
+.verifyContainer .content .safe {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.verifyContainer .content .safe .safeImg {
+  width: 50rpx;
+  height: 50rpx;
+}
+.verifyContainer .content .safe .safeText {
+  font-size: 30rpx;
+  font-weight: bold;
+}
+.verifyContainer .content .verifyText {
+  font-size: 30rpx;
+  font-weight: bold;
+  margin: 15rpx 0;
+}
+.verifyContainer .content .btn {
+  width: 90%;
+  height: 100rpx;
+  background-color: #FEB532;
+  border-radius: 50rpx;
+  line-height: 50rpx;
+}
+.verifyContainer .content .btn .top {
+  font-size: 28rpx;
+  font-weight: bold;
+}
+.verifyContainer .content .btn .bottom {
+  font-size: 24rpx;
+}
+
+/* 余额页面（点击"免押金使用"后展示） */
+.balancePage {
+  min-height: 100vh;
+  background-color: #F5F5F5;
+}
+
+/* 顶部余额头部区域 */
+.balanceHeader {
+  background-color: #ffffff;
+  padding: 60rpx 40rpx 60rpx 40rpx;
+  margin-bottom: 20rpx;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.balanceLeft {
+  flex: 1;
+}
+
+.balanceTitle {
+  font-size: 28rpx;
+  color: #666666;
+  margin-bottom: 30rpx;
+}
+
+.balanceValue {
+  display: flex;
+  align-items: baseline;
+}
+
+.balanceNumber {
+  font-size: 80rpx;
+  font-weight: bold;
+  color: #333333;
+  line-height: 1;
+}
+
+.balanceUnit {
+  font-size: 36rpx;
+  font-weight: normal;
+  color: #333333;
+  margin-left: 8rpx;
+}
+
+.balanceRight {
+  display: flex;
+  align-items: center;
+  padding-top: 30rpx;
+}
+
+.balanceDetail {
+  font-size: 28rpx;
+  color: #666666;
+  margin-right: 8rpx;
+}
+
+.balanceDetailArrow {
+  width: 20rpx;
+  height: 20rpx;
+}
+
+/* 提现和充值按钮区域 */
+.balanceButtons {
+  display: flex;
+  background-color: #ffffff;
+  margin: 0 30rpx 20rpx 30rpx;
+  border-radius: 20rpx;
+  padding: 40rpx 0;
+}
+
+.balanceBtn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.balanceBtn:first-child {
+  border-right: 1rpx solid #F0F0F0;
+}
+
+.btnIcon {
+  width: 48rpx;
+  height: 48rpx;
+  margin-bottom: 16rpx;
+}
+
+.btnText {
+  font-size: 28rpx;
+  color: #333333;
+}
+
+/* 功能列表容器 */
+.balanceContent {
+  background-color: #ffffff;
+  margin: 0 30rpx;
+  border-radius: 20rpx;
+  overflow: hidden;
+}
+
+/* 列表项 */
+.balanceListItem {
+  display: flex;
+  align-items: center;
+  padding: 40rpx 30rpx;
+  border-bottom: 1rpx solid #F0F0F0;
+  position: relative;
+}
+
+.balanceListItem:last-child {
+  border-bottom: none;
+}
+
+.listItemIcon {
+  width: 44rpx;
+  height: 44rpx;
+  margin-right: 24rpx;
+  flex-shrink: 0;
+}
+
+.listItemInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.listItemTitle {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #333333;
+  margin-bottom: 10rpx;
+}
+
+.listItemDesc {
+  font-size: 26rpx;
+  color: #999999;
+}
+
+.listItemArrow {
+  width: 20rpx;
+  height: 20rpx;
+  flex-shrink: 0;
+}

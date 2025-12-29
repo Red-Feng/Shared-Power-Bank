@@ -1,0 +1,72 @@
+<!-- 弹窗：点击前显示 -->
+<view wx:if="{{c}}" class="verifyContainer">
+  <view class="content">
+    <!-- 安全提示模块 -->
+    <view class="safe">
+      <image class="safeImg" src="/static/images/安全.png"></image>
+      <text class="safeText">信息安全有保障</text>
+    </view>
+
+    <!-- 验证提示文本 -->
+    <view class="verifyText">请先进行验证可借充电宝</view>
+
+    <!-- 免押金按钮 -->
+    <button class="btn" bindtap="{{a}}">
+      <view class="top">免押金使用</view>
+      <view class="bottom">(微信支付分400分及以上免押金)</view>
+    </button>
+  </view>
+</view>
+
+<!-- 页面内正常展示的余额页面：点击"免押金使用"后出现 -->
+<view wx:if="{{b}}" class="balancePage">
+  <!-- 顶部余额显示区域 -->
+  <view class="balanceHeader">
+    <view class="balanceLeft">
+      <view class="balanceTitle">账户余额</view>
+      <view class="balanceValue">
+        <text class="balanceNumber">99</text>
+        <text class="balanceUnit">.00元</text>
+      </view>
+    </view>
+    <view class="balanceRight">
+      <text class="balanceDetail">余额明细</text>
+      <image class="balanceDetailArrow" src="/static/images/向右.png"></image>
+    </view>
+  </view>
+
+  <!-- 提现和充值按钮区域 -->
+  <view class="balanceButtons">
+    <view class="balanceBtn">
+      <image class="btnIcon" src="/static/images/账户助手.png"></image>
+      <text class="btnText">提现</text>
+    </view>
+    <view class="balanceBtn">
+      <image class="btnIcon" src="/static/images/外汇.png"></image>
+      <text class="btnText">充值</text>
+    </view>
+  </view>
+
+  <!-- 功能列表容器 -->
+  <view class="balanceContent">
+    <!-- 优惠券项 -->
+    <view class="balanceListItem">
+      <image class="listItemIcon" src="/static/images/优惠券.png"></image>
+      <view class="listItemInfo">
+        <text class="listItemTitle">优惠券</text>
+        <text class="listItemDesc">88张</text>
+      </view>
+      <image class="listItemArrow" src="/static/images/向右.png"></image>
+    </view>
+
+    <!-- 计次卡套餐项 -->
+    <view class="balanceListItem">
+      <image class="listItemIcon" src="/static/images/顺序.png"></image>
+      <view class="listItemInfo">
+        <text class="listItemTitle">计次卡套餐</text>
+        <text class="listItemDesc">暂无套餐</text>
+      </view>
+      <image class="listItemArrow" src="/static/images/向右.png"></image>
+    </view>
+  </view>
+</view>

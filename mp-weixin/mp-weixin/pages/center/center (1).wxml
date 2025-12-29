@@ -1,0 +1,69 @@
+<view class="centerContainer data-v-3f122818">
+  <!-- 顶部用户信息区域 -->
+  <view class="topHeader data-v-3f122818">
+    <image class="avatar data-v-3f122818" src="/static/images/小子.png"></image>
+      <view class="userInfo data-v-3f122818">
+        <text class="phoneNum data-v-3f122818" bindtap="{{i}}">{{phoneNumber}}</text>
+        <text class="userId data-v-3f122818">ID: {{userId}}</text>
+      </view>
+    <view class="topIcons data-v-3f122818" bindtap="{{f}}">
+      <image class="cardIcon data-v-3f122818" src="/static/images/设置.png"></image>
+    </view>
+  </view>
+
+  <!-- 押金和优惠券卡片区域 -->
+  <view class="cardsSection data-v-3f122818">
+    <!-- 押金卡片 -->
+    <view class="card depositCard data-v-3f122818" bindtap="{{c}}">
+      <image class="cardIcon data-v-3f122818" src="/static/images/外汇.png"></image>
+      <view class="cardText data-v-3f122818">
+        <text class="cardTitle data-v-3f122818">押金</text>
+        <text class="cardValue data-v-3f122818">{{depositAmount}}元</text>
+      </view>
+    </view>
+
+    <!-- 优惠券卡片 -->
+    <view class="card couponCard data-v-3f122818" bindtap="{{e}}">
+      <image class="cardIcon data-v-3f122818" src="/static/images/优惠券.png"></image>
+      <view class="cardText data-v-3f122818">
+        <text class="cardTitle data-v-3f122818">优惠券</text>
+        <text class="cardValue data-v-3f122818">{{couponCount}}张</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 我的服务区域 -->
+  <view class="servicesSection data-v-3f122818">
+    <view class="sectionTitle data-v-3f122818">
+      <view class="titleBar data-v-3f122818"></view>
+      <text class="titleText data-v-3f122818">我的服务</text>
+    </view>
+
+    <!-- 服务按钮网格 -->
+    <view class="servicesGrid data-v-3f122818">
+      <!-- 我的订单 -->
+      <view class="serviceItem data-v-3f122818" bindtap="{{d}}">
+        <view class="serviceIconWrapper orderIcon data-v-3f122818">
+          <image class="serviceIcon data-v-3f122818" src="/static/images/申请记录.png"></image>
+        </view>
+        <text class="serviceText data-v-3f122818">我的订单</text>
+      </view>
+
+      <!-- 客服中心 -->
+      <view class="serviceItem data-v-3f122818" bindtap="{{g}}">
+        <view class="serviceIconWrapper serviceIconWrapper2 data-v-3f122818">
+          <image class="serviceIcon data-v-3f122818" src="/static/images/聊天.png"></image>
+        </view>
+        <text class="serviceText data-v-3f122818">客服中心</text>
+      </view>
+
+      <!-- 关于我们 -->
+      <view class="serviceItem data-v-3f122818" bindtap="{{h}}">
+        <view class="serviceIconWrapper aboutIcon data-v-3f122818">
+          <image class="serviceIcon data-v-3f122818" src="/static/images/信息.png"></image>
+        </view>
+        <text class="serviceText data-v-3f122818">关于我们</text>
+      </view>
+    </view>
+  </view>
+</view>

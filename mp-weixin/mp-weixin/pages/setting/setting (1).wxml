@@ -1,0 +1,31 @@
+<view class="settingPage">
+  <view class="settingList">
+    <!-- 消息设置 -->
+    <view class="settingItem">
+      <image class="itemIconLeft" src="/static/images/设置.png"></image>
+      <view class="itemText">
+        <text class="itemTitle">消息设置</text>
+      </view>
+      <image class="itemIconRight" src="/static/images/向右.png"></image>
+    </view>
+
+    <!-- 隐私设置 -->
+    <view class="settingItem">
+      <image class="itemIconLeft" src="/static/images/信息.png"></image>
+      <view class="itemText">
+        <text class="itemTitle">隐私设置</text>
+      </view>
+      <image class="itemIconRight" src="/static/images/向右.png"></image>
+    </view>
+
+    <!-- 关于电击 -->
+    <view class="settingItem">
+      <image class="itemIconLeft" src="/static/images/云管家.png"></image>
+      <view class="itemText">
+        <text class="itemTitle">关于我们</text>
+      </view>
+      <image class="itemIconRight" src="/static/images/向右.png"></image>
+    </view>
+  </view>
+</view>
+

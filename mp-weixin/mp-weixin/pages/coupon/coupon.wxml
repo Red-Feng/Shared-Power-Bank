@@ -1,0 +1,70 @@
+<view class="couponContainer">
+  <!-- 顶部标题栏 -->
+
+  <!-- 顶部 tab -->
+  <view class="tabBar">
+    <view class="tabItem tabActive">
+      <text>兑换券码</text>
+      <view class="tabUnderline"></view>
+    </view>
+    <view class="tabItem">
+      <text>我的权益</text>
+    </view>
+  </view>
+
+  <!-- 激活方式 1 -->
+  <view class="section">
+    <text class="sectionTitle">激活方式 1</text>
+    <view class="card">
+      <view class="cardHeader">
+        <view class="cardIconBox">
+          <image class="cardIcon" src="/static/images/优惠券.png"></image>
+        </view>
+        <text class="cardHeaderText">券码验证</text>
+      </view>
+
+      <view class="codeInputRow">
+        <input
+          class="codeInput"
+          placeholder="请输入兑换码"
+          placeholder-class="placeholder"
+        />
+        <view class="codeDivider"></view>
+        <text class="pasteText">粘贴</text>
+      </view>
+
+      <button class="primaryBtn">确认兑换</button>
+
+      <view class="descRow">
+        <text class="descText">兑换说明</text>
+        <text class="descArrow">∨</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 激活方式 2 -->
+  <view class="section">
+    <text class="sectionTitle">激活方式 2</text>
+    <view class="card secondCard">
+      <view class="cardHeader">
+        <view class="cardIconBox phoneIconBox">
+          <image class="cardIcon" src="/static/images/通讯录.png"></image>
+        </view>
+        <text class="cardHeaderText">手机号验证</text>
+      </view>
+
+      <view class="phoneRow">
+        <input
+          class="phoneInput"
+          placeholder=""
+        />
+        <view class="phoneDivider"></view>
+        <text class="getPhoneText">获取手机号</text>
+      </view>
+
+      <button class="activateBtn">立即激活</button>
+    </view>
+  </view>
+</view>
+
+

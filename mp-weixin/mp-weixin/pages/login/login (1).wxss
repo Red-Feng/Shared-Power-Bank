@@ -1,0 +1,221 @@
+.loginContainer {
+  min-height: 100vh;
+  background-color: #f5fbff;
+  padding: 40rpx 40rpx 60rpx 40rpx;
+  box-sizing: border-box;
+}
+
+.loginHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 60rpx;
+}
+
+.backArrow {
+  font-size: 36rpx;
+  color: #333;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.headerRight text {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.welcome {
+  margin-bottom: 40rpx;
+}
+
+.hi {
+  display: block;
+  font-size: 44rpx;
+  font-weight: bold;
+  color: #153B3B;
+  margin-bottom: 12rpx;
+}
+
+.subText {
+  font-size: 24rpx;
+  color: #7f8c8d;
+}
+
+.inputRow {
+  height: 100rpx;
+  background-color: #eef6f7;
+  border-radius: 50rpx;
+  padding: 0 30rpx;
+  display: flex;
+  align-items: center;
+  margin-top: 30rpx;
+}
+
+.areaSelect {
+  display: flex;
+  align-items: center;
+}
+
+.areaText {
+  font-size: 28rpx;
+  color: #000;
+}
+
+.areaArrow {
+  font-size: 24rpx;
+  color: #000;
+  margin-left: 8rpx;
+}
+
+.divider {
+  width: 2rpx;
+  height: 40rpx;
+  background-color: #dde4e6;
+  margin: 0 30rpx;
+}
+
+.phoneInput,
+.codeInput {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.placeholder {
+  color: #c0d0d5;
+}
+
+.errorText {
+  margin-top: 12rpx;
+  margin-left: 20rpx;
+  font-size: 22rpx;
+  color: #ff4d4f;
+}
+
+.codeBtn {
+  width: 200rpx;
+  height: 70rpx;
+  line-height: 70rpx;
+  font-size: 24rpx;
+  border-radius: 35rpx;
+  padding: 0;
+}
+
+.codeBtnActive {
+  background-color: #00d3d0;
+  color: #ffffff;
+}
+
+.codeBtnDisabled {
+  background-color: #d0d7db;
+  color: #ffffff;
+}
+
+.codeBtn::after {
+  border: none;
+}
+
+.bindBtnWrapper {
+  margin-top: 60rpx;
+  position: relative;
+}
+
+.bindBtn {
+  width: 100%;
+  height: 100rpx;
+  line-height: 100rpx;
+  border-radius: 50rpx;
+  font-size: 30rpx;
+}
+
+.bindBtnActive {
+  background-color: #00d3d0;
+  color: #ffffff;
+}
+
+.bindBtnDisabled {
+  background-color: #d0d7db;
+  color: #ffffff;
+}
+
+.bindBtn::after {
+  border: none;
+}
+
+.toastMsg {
+  margin-top: 20rpx;
+  padding: 6rpx 24rpx;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 8rpx;
+  display: inline-block;
+  align-self: flex-start;
+}
+
+.toastText {
+  font-size: 24rpx;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.agreement {
+  margin-top: 40rpx;
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+  flex-wrap: nowrap;
+}
+
+.checkbox {
+  width: 28rpx;
+  height: 28rpx;
+  border-radius: 50%;
+  border: 2rpx solid #c0d0d5;
+  margin-right: 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.checkboxChecked {
+  background-color: #00d3d0;
+  border-color: #00d3d0;
+}
+
+.checkIcon {
+  color: #ffffff;
+  font-size: 20rpx;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.agreeText {
+  font-size: 24rpx;
+  color: #7f8c8d;
+  white-space: nowrap;
+}
+
+.link {
+  color: #00d3d0;
+}
+
+.tips {
+  margin-top: 10rpx;
+}
+
+.tipLine {
+  display: block;
+  font-size: 22rpx;
+  color: #9aa5aa;
+  line-height: 1.6;
+}
+
+

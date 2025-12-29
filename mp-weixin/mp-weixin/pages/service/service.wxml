@@ -1,0 +1,53 @@
+<view class="serviceContainer">
+  <!-- 消息列表区域 -->
+  <scroll-view 
+    class="messageList" 
+    scroll-y="true" 
+    scroll-top="{{f}}"
+    scroll-into-view=""
+    enable-back-to-top="true"
+  >
+    <view 
+      wx:for="{{a}}" 
+      wx:for-item="msg" 
+      wx:key="index"
+      class="messageItem {{msg.type === 'user' ? 'messageUser' : 'messageAI'}}"
+    >
+      <!-- AI消息（左侧） -->
+      <view wx:if="{{msg.type === 'ai'}}" class="aiMessage">
+        <image class="aiAvatar" src="/static/images/小子.png"></image>
+        <view class="messageBubble aiBubble">
+          <text class="messageText">{{msg.content}}</text>
+        </view>
+        <text class="messageTime">{{msg.time}}</text>
+      </view>
+
+      <!-- 用户消息（右侧） -->
+      <view wx:else class="userMessage">
+        <text class="messageTime">{{msg.time}}</text>
+        <view class="messageBubble userBubble">
+          <text class="messageText">{{msg.content}}</text>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 输入区域（底部固定） -->
+  <view class="inputArea">
+    <input 
+      class="inputBox" 
+      placeholder="请输入您的问题..." 
+      value="{{c}}"
+      bindinput="{{d}}"
+      confirm-type="send"
+      bindconfirm="{{b}}"
+    />
+    <button 
+      class="sendBtn {{e ? 'sending' : ''}}" 
+      bindtap="{{b}}"
+      disabled="{{e}}"
+    >
+      {{e ? '发送中...' : '发送'}}
+    </button>
+  </view>
+</view>
