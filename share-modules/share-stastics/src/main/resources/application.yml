@@ -1,0 +1,71 @@
+server:
+  port: 9505
+
+spring:
+  application:
+    # 应用名称
+    name: share-stastics
+  profiles:
+    # 环境配置
+    active: dev
+  main:
+    allow-bean-definition-overriding: true #当遇到同样名字的时候，是否允许覆盖注册
+  cloud:
+    nacos:
+      discovery:
+        # 服务注册地址
+        server-addr: 192.168.110.124:8848
+        namespace:  a1642bd2-6014-4acd-b2f9-8bcac627bf68
+      config:
+        # 配置中心地址
+        server-addr: 192.168.110.124:8848
+        namespace:  a1642bd2-6014-4acd-b2f9-8bcac627bf68
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        options:
+          model: deepseek-r1:1.5b
+          temperature: 0.7
+        # 系统提示词，会在用户输入前自动添加
+        system-prompt: |
+          你是一个专业的AI助手，请用简洁、准确的方式回答用户的问题。
+          如果问题涉及技术、编程、业务等专业领域，请提供详细且实用的解答。
+      # 订单报表配置
+      order-report:
+        # 是否使用AI生成SQL，false表示直接根据关键词生成
+        use-ai: false
+        # 系统提示词（仅在use-ai为true时使用）
+        system-prompt: |
+          你是专业的MySQL SQL生成助手。根据用户需求生成订单统计SQL查询。
+          
+          数据库表：order_info
+          主要字段：id, order_no, user_id, start_time, end_time, create_time, status, total_amount, duration
+          
+          严格规则：
+          1. 必须返回两个字段：order_date 和 order_count（字段名必须完全一致）
+          2. 必须使用以下SQL模板结构：
+             SELECT DATE_FORMAT(create_time, '%Y-%m') AS order_date, COUNT(*) AS order_count
+             FROM order_info
+             [WHERE条件]
+             GROUP BY order_date
+             ORDER BY order_date
+          3. 日期格式：
+             - 按月：DATE_FORMAT(create_time, '%Y-%m')
+             - 按日：DATE_FORMAT(create_time, '%Y-%m-%d')
+             - 按年：DATE_FORMAT(create_time, '%Y')
+          4. 月份查询示例：
+             - "11月" → WHERE DATE_FORMAT(create_time, '%Y-%m') = '2024-11'
+             - "12月有多少订单" → WHERE DATE_FORMAT(create_time, '%Y-%m') = '2024-12'
+          5. 只返回SQL，不要任何解释、注释、markdown代码块标记
+          6. 确保SQL语法正确，可直接执行
+          7. 字段别名必须：order_date 和 order_count（小写，下划线）
+          8. 表名：order_info
+          
+          示例：
+          用户："11月有多少订单"
+          输出：SELECT DATE_FORMAT(create_time, '%Y-%m') AS order_date, COUNT(*) AS order_count FROM order_info WHERE DATE_FORMAT(create_time, '%Y-%m') = '2024-11' GROUP BY order_date ORDER BY order_date
+    # Dify配置
+    dify:
+      base-url: http://192.168.22.139/v1
+      api-key: app-KOKC4YXKvQ4ec9LGdTgM05hV

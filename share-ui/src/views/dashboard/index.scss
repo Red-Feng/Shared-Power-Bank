@@ -1,0 +1,609 @@
+@import "@/assets/styles/variables.module.scss";
+
+// 本页自用的基础变量（项目里未全局定义的补充）
+$base-color-bk4: #909399; // 次级文字颜色
+$base--color-bk2: #303133; // 主文字颜色
+$--color-bk3: #606266; // 次级文字颜色（标签/说明）
+$base-font-size-16: 16px;
+$base-font-size-14: 14px;
+$base-font-size-12: 12px;
+$--color-main: $--color-primary; // 主色统一使用全局 primary
+.home-wrapper {
+  padding: 24px 15px 52px 24px;
+  .el-card {
+    box-shadow: 0 2px 4px 0 #00000008;
+  }
+
+  .el-card__header {
+    padding: 20px 20px 0 !important;
+    display: block;
+    font-weight: 700;
+    font-size: 16px;
+    .el-card__body {
+      display: block;
+    }
+
+    .tit {
+      font-size: 16px;
+      display: flex;
+
+      span {
+        flex: 1;
+
+        &.time {
+          font-size: 12px;
+          font-weight: normal;
+          color: $base-color-bk4;
+          flex: none;
+        }
+      }
+    }
+  }
+
+  .t-card__body {
+    padding: 20px;
+  }
+
+  // 顶部一行的左右两张卡片高度不用强制拉成一样高，按各自内容高度展示
+  .top-row {
+    align-items: flex-start;
+  }
+
+  .dataCon {
+    display: flex;
+    // 顶部「数据概览」五个圆环区域，适当与标题留一点距离
+    padding-top: 12px;
+  }
+
+  .dashboard-chart-container {
+    // 单个圆环图尺寸稍微放大，让「数据概览」更醒目
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+  }
+
+  .roleCon {
+    // 右侧员工信息卡整体稍微紧凑一些
+    padding-top: 4px;
+
+    .head {
+      display: flex;
+      padding: 10px 0 6px;
+      .img {
+        width: 42px;
+        height: 42px;
+        margin-right: 10px;
+
+        img {
+          width: 42px;
+          height: 42px;
+          border-radius: 50%;
+        }
+      }
+
+      .rText {
+        p {
+          line-height: 24px;
+
+          &:first-child {
+            font-size: $base-font-size-16;
+            font-weight: 700;
+          }
+
+          &:last-child {
+            font-size: $base-font-size-14;
+            color: $base-color-bk4;
+          }
+        }
+      }
+    }
+
+    .userInfo {
+      display: flex;
+      flex-wrap: wrap;
+      padding-bottom: 2px;
+
+      p {
+        width: calc(50%);
+        display: inline-block;
+        line-height: 26px;
+        color: $base-color-bk4;
+        font-size: 14px;
+        // display: flex;
+        // align-items: center;
+        position: relative;
+        padding-left: 25px;
+        height: 26px;
+
+        i {
+          display: inline-block;
+          width: 20px;
+          height: 20px;
+          vertical-align: middle;
+          margin-right: 5px;
+          position: absolute;
+          left: 0;
+          top: 3px;
+        }
+
+        .icon1 {
+          background: url(../../assets/images/icon_yhgl2x.png) no-repeat;
+          background-size: contain;
+        }
+
+        .icon2 {
+          background: url(../../assets/images/icon_jsgl2x.png) no-repeat;
+          background-size: contain;
+        }
+
+        .icon3 {
+          background: url(../../assets/images/icon_bmgl2x.png) no-repeat;
+          background-size: contain;
+        }
+
+        .icon4 {
+          background: url(../../assets/images/icon_gwgl2x.png) no-repeat;
+          background-size: contain;
+        }
+      }
+
+      .userTit {
+        .textOverflow {
+          max-height: 24px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: block;
+          -webkit-line-clamp: 1;
+          -webkit-box-orient: vertical;
+        }
+      }
+    }
+
+    .hFoot {
+      .fTit {
+        font-size: $base-font-size-14;
+        color: $base--color-bk2;
+        line-height: 26px;
+        padding-bottom: 10px;
+      }
+
+      .imgItem {
+        display: flex;
+        padding-bottom: 0;
+
+        li {
+          // width: 14%;
+          margin-right: 5px;
+
+          img,
+          span {
+            width: 28px;
+            height: 28px;
+            line-height: 28px;
+            border-radius: 50%;
+            display: inline-block;
+          }
+
+          &:last-child {
+            span {
+              background: $--color-main;
+              font-size: $base-font-size-14;
+              font-weight: 700;
+              color: $base-logo-title-color;
+              text-align: center;
+              margin-right: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .condition {
+    display: flex;
+    position: relative;
+    padding: 0 0 5px;
+
+    .el-tabs {
+      flex: 1;
+      padding-bottom: 0;
+      .el-tabs__nav-wrap{
+          &::after{
+              display: none;
+          }
+      }
+      .el-tabs__active-bar {
+        height: 4px;
+        border-radius: 2px;
+        margin: 0 0 0 12px;
+        width: 32px !important;
+      }
+
+      .el-tabs__item {
+        padding: 0;
+        margin: 0 14px 0 0;
+      }
+
+      .el-tabs__item {
+        color: $--color-bk3;
+
+        &.is-active {
+          color: $base--color-bk2;
+          font-size: 16px;
+          font-weight: 700;
+        }
+
+        &.t-size-m {
+          height: 32px;
+          line-height: 32px;
+        }
+      }
+    }
+
+    .times {
+      position: absolute;
+      right: 0;
+      z-index: 9;
+      display: flex;
+      line-height: 40px;
+      font-size: 12px;
+
+      .date {
+        display: flex;
+        padding-right: 15px;
+        list-style: none;
+
+        li {
+          padding: 0 5px;
+          cursor: pointer;
+          font-weight: normal;
+        }
+
+        .active {
+          color: $--color-main;
+        }
+      }
+    }
+
+    .t-tabs .t-tabs__nav-container.t-is-top::after {
+      background-color: transparent;
+    }
+  }
+
+  .dashboard-chart-card {
+    padding: 0;
+  }
+
+  // 常用功能卡片：整体高度减小，更紧凑
+  .common-func-card {
+    :deep(.el-card__body) {
+      padding: 6px 16px 4px;
+    }
+
+    .useList {
+      display: flex;
+      flex-wrap: wrap;
+      padding-top: 4px;
+      padding-left: 0;
+      text-align: center;
+      align-items: flex-start;
+      justify-content: flex-start;
+
+      a,
+      .addUser {
+        padding: 6px 0;
+        color: #332929;
+        width: 25%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+          color: #332929;
+        }
+
+        .func-icon {
+          display: inline-block;
+          width: 20px;
+          height: 20px;
+          margin-right: 8px;
+          margin-bottom: 4px;
+        }
+
+      }
+    }
+  }
+
+  .monitorContainer {
+    width: 100%;
+    height: 210px;
+
+    & > div {
+      &:first-child {
+        width: 100% !important;
+
+        & > canvas {
+          width: 100% !important;
+        }
+      }
+    }
+  }
+
+  .dateCon {
+    height: 30px;
+    background: #f3f8f9;
+    border-radius: 2px;
+    line-height: 30px;
+    margin-top: 5px;
+    padding: 0 10px;
+    font-weight: normal;
+    font-size: 14px;
+  }
+
+  .backlogCon {
+    padding-top: 8px;
+
+    ul {
+      li {
+        background: #f3f8f9;
+        border-radius: 2px;
+        padding: 14px 20px 14px;
+        margin-top: 10px;
+        line-height: 20px;
+        display: flex;
+
+        .con {
+          flex: 1;
+        }
+
+        .btn {
+          height: 32px;
+          line-height: 30px;
+          background: $--color-main;
+          border-radius: 2px;
+          color: $base-logo-title-color;
+          width: 60px;
+          text-align: center;
+          display: inline-block;
+          margin-top: 6px;
+        }
+
+        p {
+          padding: 2px 0;
+        }
+
+        .head {
+          color: $base--color-bk2;
+          font-weight: 700;
+        }
+
+        .time {
+          color: $base-color-bk4;
+        }
+      }
+    }
+  }
+
+  .typeIcon {
+    display: inline-block;
+    text-align: center;
+    width: 36px;
+    height: 18px;
+    line-height: 18px;
+    border-radius: 16px;
+    font-size: 12px;
+    color: #fff;
+    margin-right: 8px;
+    font-weight: normal;
+  }
+
+  .icon1 {
+    background: #fe6e6e;
+  }
+
+  .icon2 {
+    background: #ffb057;
+  }
+
+  .icon3 {
+    background: #27ba9b;
+  }
+
+  .timeTie {
+    display: flex;
+
+    div {
+      &:last-child {
+        flex: 1;
+        text-align: right;
+        font-size: $base-font-size-12;
+        font-weight: normal;
+        color:$base-color-bk4;
+
+        .goToday {
+          color: $--color-main;
+          cursor: pointer;
+          margin-right: 10px;
+        }
+      }
+    }
+  }
+
+  .dateSelete {
+    position: relative;
+    padding: 10px 40px 0;
+
+    ul {
+      display: flex;
+      flex-wrap: wrap;
+
+      li {
+        flex: 1;
+        text-align: center;
+        color: $base--color-bk2;
+        line-height: 22px;
+
+        p {
+          padding: 2px 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          span {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            line-height: 24px;
+            text-align: center;
+          }
+
+          &:first-child {
+            color: $base-color-bk4;
+          }
+
+          &:last-child {
+            span {
+              cursor: pointer;
+
+              &.dayActive {
+                background: $--color-main;
+                border-radius: 12px;
+                color: $base-menu-light-background;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    & > span {
+      display: inline-block;
+      width: 36px;
+      height: 36px;
+      position: absolute;
+      top: 20px;
+    }
+
+    .pre {
+      background: url(../../assets/images/btn_xia_nor.png) no-repeat 50% 50%;
+      background-size: contain;
+      transform: rotate(180deg);
+      left: 0;
+    }
+
+    .next {
+      background: url(../../assets/images/btn_xia_nor.png) no-repeat 50% 50%;
+      background-size: contain;
+      right: 0;
+    }
+
+    .forbidActive {
+      background: url(../../assets/images/btn_shang_nox.png) no-repeat 50% 50%;
+      background-size: contain;
+      transform: rotate(0);
+    }
+  }
+
+  .subscribeCon {
+    margin-top: -5px;
+
+    ul {
+      li {
+        background: #f3f8f9;
+        border-radius: 2px;
+        padding: 7px;
+        line-height: 20px;
+        margin: 14px 0 0;
+        display: flex;
+        align-items: center;
+        color: $base-color-bk4;
+        font-size: 14px;
+        span {
+          &:last-child {
+            flex: 1;
+            text-align: right;
+          }
+        }
+      }
+    }
+
+    .typeIcon {
+      margin-right: 8px;
+    }
+
+    .time {
+      font-size: $base-font-size-16;
+      font-weight: 700;
+      padding-right: 25px;
+      color: $base--color-bk2;
+    }
+  }
+
+  .el-card__header {
+    display: block;
+    border: 0 none;
+  }
+
+  .dashboard-rank-card,.dashboard-chart-card {
+    // 原来固定 height: 278px 会导致「常用功能」下面两行被截断
+    // 改为最小高度，允许内容按需撑开
+    min-height: 278px;
+    .el-card__header {
+      font-size: $base-font-size-16;
+      font-weight: 700;
+    }
+  }
+  .rankCard {
+    min-width: 450px;
+  }
+
+  // 底部「设备状态分布 / 用户活跃度分布 / 预约总览」与中部图表保持正常间距，避免样式重叠
+  .rank-list-row {
+    margin-top: 12px;
+  }
+
+  // 右侧个人信息卡片所在列，不再强制与左侧等高，只根据自身内容高度展示
+  .dashboard-user-col {
+    align-self: flex-start;
+  }
+
+  .card-title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    .main-title {
+      font-size: $base-font-size-16;
+      font-weight: 700;
+    }
+    .sub-title {
+      font-size: $base-font-size-14;
+    }
+  }
+
+  .el-badge--circle {
+    background: #e34d59;
+    height: 14px;
+    line-height: 12px;
+  }
+
+  .textOverflow {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+  }
+
+  .row-container[data-v-0d2b0973]:not(:last-child) {
+    margin: 0;
+  }
+
+  // .el-col {
+  //   margin-bottom: 24px;
+  // }
+}
+
+.el-tooltip--default .el-popup__content {
+  width: 200px !important;
+}
