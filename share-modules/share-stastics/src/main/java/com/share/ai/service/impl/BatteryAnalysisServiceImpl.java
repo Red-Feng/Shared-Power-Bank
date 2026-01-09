@@ -242,24 +242,29 @@ public class BatteryAnalysisServiceImpl implements IBatteryAnalysisService {
         
         // 异步执行Python模型训练（后台执行，不阻塞返回）
         // 注意：这里不等待结果，让前端先显示基础数据
-        new Thread(() -> {
-            try {
-                Map<String, Object> mlResult = getMLModelResults();
-                if (mlResult != null && !mlResult.isEmpty()) {
-                    // 更新缓存中的ML模型数据
-                    synchronized (this) {
-                        if (cachedAnalysisData != null) {
-                            cachedAnalysisData.put("mlModel", mlResult);
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                // 静默失败，不影响主流程
-                System.err.println("后台ML模型训练失败: " + e.getMessage());
-            }
-        }).start();
+        new Thread(this::runBackgroundMLTraining).start();
         
         return result;
+    }
+
+    /**
+     * 后台执行机器学习模型训练（用于线程调用）
+     */
+    private void runBackgroundMLTraining() {
+        try {
+            Map<String, Object> mlResult = getMLModelResults();
+            if (mlResult != null && !mlResult.isEmpty()) {
+                // 更新缓存中的ML模型数据
+                synchronized (this) {
+                    if (cachedAnalysisData != null) {
+                        cachedAnalysisData.put("mlModel", mlResult);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // 静默失败，不影响主流程
+            System.err.println("后台ML模型训练失败: " + e.getMessage());
+        }
     }
     
     /**
@@ -521,17 +526,25 @@ public class BatteryAnalysisServiceImpl implements IBatteryAnalysisService {
         List<Double> trainAcc = new ArrayList<>();
         List<Double> testAcc = new ArrayList<>();
         
+        Random random = new Random();
         // 模拟训练过程：损失下降，准确率（R²）上升
         for (int i = 0; i < 100; i++) {
-            // 损失从0.17逐渐降到0.0065
+            // 基础损失
             double loss = 0.17 * Math.exp(-i * 0.03) + 0.0065;
-            trainLoss.add(loss);
-            testLoss.add(loss * 0.95); // 测试损失略低
-            
-            // 准确率（R²）从0.6逐渐提升到0.95（提高起始值和最终值）
+            // 基础准确率
             double acc = 0.6 + (0.35 * (1 - Math.exp(-i * 0.05)));
+            
+            // 注入“坏数据”：在第30-35轮和第70-72轮加入剧烈波动
+            if ((i >= 30 && i <= 35) || (i >= 70 && i <= 72)) {
+                loss += 0.05 + random.nextDouble() * 0.1;
+                acc -= 0.1 + random.nextDouble() * 0.1;
+            }
+            
+            trainLoss.add(loss);
+            testLoss.add(loss * (0.95 + random.nextDouble() * 0.1));
+            
             trainAcc.add(acc);
-            testAcc.add(acc * 0.98); // 测试准确率略低
+            testAcc.add(acc * (0.98 - random.nextDouble() * 0.05));
         }
         
         Map<String, Object> history = new HashMap<>();
@@ -624,33 +637,33 @@ public class BatteryAnalysisServiceImpl implements IBatteryAnalysisService {
         }
         
         try {
-            switch (cell.getCellType()) {
-                case STRING:
-                    return cell.getStringCellValue().trim();
-                case NUMERIC:
-                    if (DateUtil.isCellDateFormatted(cell)) {
-                        return cell.getDateCellValue().toString();
+            CellType cellType = cell.getCellType();
+            if (cellType == CellType.STRING) {
+                return cell.getStringCellValue().trim();
+            } else if (cellType == CellType.NUMERIC) {
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    return cell.getDateCellValue().toString();
+                } else {
+                    // 处理数值，避免科学计数法
+                    double numValue = cell.getNumericCellValue();
+                    if (numValue == (long) numValue) {
+                        return String.valueOf((long) numValue);
                     } else {
-                        // 处理数值，避免科学计数法
-                        double numValue = cell.getNumericCellValue();
-                        if (numValue == (long) numValue) {
-                            return String.valueOf((long) numValue);
-                        } else {
-                            return String.valueOf(numValue);
-                        }
+                        return String.valueOf(numValue);
                     }
-                case BOOLEAN:
-                    return String.valueOf(cell.getBooleanCellValue());
-                case FORMULA:
-                    // 对于公式单元格，获取计算后的值
-                    try {
-                        DataFormatter formatter = new DataFormatter();
-                        return formatter.formatCellValue(cell);
-                    } catch (Exception e) {
-                        return cell.getCellFormula();
-                    }
-                default:
-                    return "";
+                }
+            } else if (cellType == CellType.BOOLEAN) {
+                return String.valueOf(cell.getBooleanCellValue());
+            } else if (cellType == CellType.FORMULA) {
+                // 对于公式单元格，获取计算后的值
+                try {
+                    DataFormatter formatter = new DataFormatter();
+                    return formatter.formatCellValue(cell);
+                } catch (Exception e) {
+                    return cell.getCellFormula();
+                }
+            } else {
+                return "";
             }
         } catch (Exception e) {
             return "";
@@ -665,11 +678,45 @@ public class BatteryAnalysisServiceImpl implements IBatteryAnalysisService {
         List<Double> healthList = new ArrayList<>();
         
         Random random = new Random();
-        for (int i = 0; i < 100; i++) {
+        
+        // 生成正常趋势数据
+        for (int i = 0; i < 90; i++) {
             double cycles = 10 + (i * 3.2);
             double temp = 12 + (i * 0.43) + random.nextGaussian() * 2;
             double health = 1.0 - (cycles * 0.0012) - (temp * 0.0005) + random.nextGaussian() * 0.01;
             health = Math.max(0.1, Math.min(1.0, health));
+            
+            Map<String, Object> rowData = new HashMap<>();
+            rowData.put("充放电次数", String.format("%.0f", cycles));
+            rowData.put("环境温度", String.format("%.1f", temp));
+            rowData.put("电池量", String.format("%.4f", health));
+            
+            dataList.add(rowData);
+            cyclesList.add(cycles);
+            tempList.add(temp);
+            healthList.add(health);
+        }
+        
+        // 注入“坏数据”/异常数据
+        for (int i = 0; i < 10; i++) {
+            double cycles, temp, health;
+            
+            if (i < 3) {
+                // 异常低健康度（虽然次数少）
+                cycles = 5 + random.nextInt(20);
+                temp = 20 + random.nextInt(10);
+                health = 0.1 + random.nextDouble() * 0.2; // 0.1 - 0.3
+            } else if (i < 6) {
+                // 极端高温导致健康度暴跌
+                cycles = 100 + random.nextInt(50);
+                temp = 85 + random.nextDouble() * 15; // 85 - 100 度
+                health = 0.2 + random.nextDouble() * 0.2; // 0.2 - 0.4
+            } else {
+                // 离群值（数据点漂移）
+                cycles = 300 + random.nextInt(100);
+                temp = -10 + random.nextInt(5); // 极低温
+                health = 0.3 + random.nextDouble() * 0.1; // 0.3 - 0.4
+            }
             
             Map<String, Object> rowData = new HashMap<>();
             rowData.put("充放电次数", String.format("%.0f", cycles));

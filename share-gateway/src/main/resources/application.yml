@@ -1,0 +1,8 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: share-stastics
+          uri: lb://share-stastics
+          predicates:
+            - Path=/sta/**
