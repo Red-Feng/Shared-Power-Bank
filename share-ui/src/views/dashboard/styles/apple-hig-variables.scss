@@ -1,0 +1,112 @@
+/**
+ * Apple Human Interface Guidelines (HIG) Variables
+ * Following the design system from Apple-Hig-Designer
+ */
+
+// --- Typography ---
+$font-system: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+$font-rounded: -apple-system-rounded, 'SF Pro Rounded', 'Helvetica Neue Rounded', $font-system;
+
+$text-caption2: 11px;
+$text-caption1: 12px;
+$text-footnote: 13px;
+$text-subhead: 15px;
+$text-callout: 16px;
+$text-body: 17px;
+$text-headline: 17px;
+$text-title3: 20px;
+$text-title2: 22px;
+$text-title1: 28px;
+$text-large-title: 34px;
+
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+// --- Colors (Light Mode) ---
+$system-blue: #007AFF;
+$system-green: #34C759;
+$system-indigo: #5856D6;
+$system-orange: #FF9500;
+$system-pink: #FF2D55;
+$system-purple: #AF52DE;
+$system-red: #FF3B30;
+$system-teal: #5AC8FA;
+$system-yellow: #FFCC00;
+
+$system-gray: #8E8E93;
+$system-gray2: #AEAEB2;
+$system-gray3: #C7C7CC;
+$system-gray4: #D1D1D6;
+$system-gray5: #E5E5EA;
+$system-gray6: #F2F2F7;
+
+$label-primary: #000000;
+$label-secondary: rgba(60, 60, 67, 0.6);
+$label-tertiary: rgba(60, 60, 67, 0.3);
+$label-quaternary: rgba(60, 60, 67, 0.18);
+
+$fill-primary: rgba(120, 120, 128, 0.2);
+$fill-secondary: rgba(120, 120, 128, 0.16);
+$fill-tertiary: rgba(120, 120, 128, 0.12);
+$fill-quaternary: rgba(120, 120, 128, 0.08);
+
+$bg-primary: #FFFFFF;
+$bg-secondary: #F2F2F7;
+$bg-tertiary: #FFFFFF;
+
+$separator: rgba(60, 60, 67, 0.29);
+
+// --- Spacing (8pt Grid) ---
+$space-1: 4px;
+$space-2: 8px;
+$space-3: 12px;
+$space-4: 16px;
+$space-5: 20px;
+$space-6: 24px;
+$space-8: 32px;
+$space-10: 40px;
+
+// --- Border Radius ---
+$radius-sm: 4px;
+$radius-md: 8px;
+$radius-lg: 12px;
+$radius-xl: 16px;
+$radius-2xl: 20px;
+$radius-full: 9999px;
+
+$radius-card: $radius-xl;
+$radius-button: $radius-full;
+
+// --- Shadows ---
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
+$shadow-md: 0 4px 6px rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.06);
+$shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.04), 0 4px 6px rgba(0, 0, 0, 0.08);
+$shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.06), 0 8px 10px rgba(0, 0, 0, 0.1);
+
+// --- Animation ---
+$duration-fast: 150ms;
+$duration-normal: 250ms;
+$duration-slow: 400ms;
+$ease-out: cubic-bezier(0.15, 0, 0.15, 1);
+$ease-in-out: cubic-bezier(0.42, 0, 0.58, 1);
+
+// --- Mixins ---
+@mixin apple-card {
+  background: $bg-primary;
+  border-radius: $radius-card;
+  box-shadow: $shadow-sm;
+  transition: transform $duration-normal $ease-out, box-shadow $duration-normal $ease-out;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+  }
+}
+
+@mixin apple-blur {
+  backdrop-filter: blur(20px) saturate(180%);
+  background-color: rgba(255, 255, 255, 0.7);
+}

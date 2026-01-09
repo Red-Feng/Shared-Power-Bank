@@ -63,7 +63,7 @@
               </p>
               <p @click="handleDay(item, index)">
                 <span :class="dayActive === index ? 'dayActive' : ''">{{
-                  item.day
+                  item.date
                 }}</span>
               </p>
             </li>
@@ -103,9 +103,10 @@ import {
   ELDER_RANK_DATA_A,
   ELDER_RANK_DATA_B,
   ELDER_RANK_DATA_C,
-  SUBSCRIBE_DATA
-} from '../constants'
-import {getElderAgeDistribution, getElderRankDistribution} from '../index1'
+  SUBSCRIBE_DATA,
+  getElderAgeDistribution,
+  getElderRankDistribution
+} from '../utils'
 
 const dataObj = ref([])
 const isToday = ref(false)
@@ -114,7 +115,8 @@ const dayActive = ref(0)
 const subscribeData = ref([]) // 触发每天的数据
 const subDataArr = ref([]) // 一月的数据
 const backlogData = ref(BACKLOG_DATA_A) // 待办事项
-let myChart=null
+let rankChart = null
+let ageChart = null
 const elderRankContainer = ref() // 老人等级
 const elderAgeContainer = ref() // 老人年龄
 
@@ -156,19 +158,20 @@ onMounted(() => {
 })
 
 const handleResize = () => {
-  myChart.resize()
+  rankChart?.resize()
+  ageChart?.resize()
 }
 
 // 老人等级分布
 const elderRankChart = () => {
-  myChart = echarts.init(elderRankContainer.value)
-  myChart.setOption(getElderRankDistribution(elderRankData.value))
+  rankChart = echarts.init(elderRankContainer.value)
+  rankChart.setOption(getElderRankDistribution(elderRankData.value))
 }
 
 // 老人年龄分布
 const elderAgeChart = () => {
-  myChart = echarts.init(elderAgeContainer.value)
-  myChart.setOption(getElderAgeDistribution(elderAgeData.value))
+  ageChart = echarts.init(elderAgeContainer.value)
+  ageChart.setOption(getElderAgeDistribution(elderAgeData.value))
 }
 
 // 是否可以触发上一周
@@ -243,3 +246,183 @@ const time = () => {
   return getDateInfo(new Date())
 }
 </script>
+
+<style lang="scss" scoped>
+@import "../styles/apple-hig-variables.scss";
+
+.dashboard-rank-card {
+  @include apple-card;
+  margin-bottom: $space-4;
+}
+
+.timeTie {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: $text-headline;
+  font-weight: $font-weight-semibold;
+  color: $label-primary;
+
+  div:last-child {
+    font-size: $text-caption1;
+    font-weight: $font-weight-regular;
+    color: $label-secondary;
+    background: $fill-quaternary;
+    padding: 2px 10px;
+    border-radius: $radius-full;
+
+    .goToday {
+      color: $system-blue;
+      cursor: pointer;
+      margin-right: $space-2;
+      font-weight: $font-weight-medium;
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+.dateSelete {
+  display: flex;
+  align-items: center;
+  padding: $space-3 0;
+  border-bottom: 0.5px solid $separator;
+  margin-bottom: $space-4;
+
+  .pre, .next {
+    width: 28px;
+    height: 28px;
+    background: $system-gray6;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all $duration-fast $ease-out;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 16px;
+
+    &:hover:not(.forbidActive) {
+      background-color: $fill-tertiary;
+      transform: scale(1.1);
+    }
+
+    &.forbidActive {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+  }
+
+  .pre { background-image: url("@/assets/icons/chevron-left.svg"); }
+  .next { background-image: url("@/assets/icons/chevron-right.svg"); }
+
+  ul {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 $space-2;
+    margin: 0;
+    list-style: none;
+
+    li {
+      text-align: center;
+      cursor: pointer;
+
+      p {
+        margin: 0;
+        
+        &:first-child {
+          font-size: 11px;
+          color: $label-tertiary;
+          margin-bottom: 4px;
+        }
+
+        span {
+          display: inline-block;
+          width: 32px;
+          height: 32px;
+          line-height: 32px;
+          border-radius: 50%;
+          font-size: $text-footnote;
+          color: $label-primary;
+          transition: all $duration-fast $ease-out;
+
+          &.dayActive {
+            background: $system-blue;
+            color: white;
+            font-weight: $font-weight-bold;
+            box-shadow: 0 4px 10px rgba(0, 122, 255, 0.3);
+          }
+
+          &:hover:not(.dayActive) {
+            background: $fill-quaternary;
+          }
+        }
+      }
+    }
+  }
+}
+
+.subscribeCon {
+  ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+
+    li {
+      display: flex;
+      align-items: center;
+      padding: $space-3 0;
+      border-bottom: 0.5px solid $separator;
+      font-size: $text-subhead;
+      transition: background $duration-fast $ease-out;
+
+      &:hover {
+        background: rgba(0,0,0,0.01);
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .typeIcon {
+        font-size: 11px;
+        padding: 2px 8px;
+        border-radius: $radius-sm;
+        margin-right: $space-3;
+        font-weight: $font-weight-bold;
+
+        &.icon1 {
+          background: rgba(52, 199, 89, 0.1);
+          color: $system-green;
+        }
+
+        &.icon3 {
+          background: rgba(0, 122, 255, 0.1);
+          color: $system-blue;
+        }
+      }
+
+      .time {
+        color: $label-primary;
+        font-weight: $font-weight-medium;
+        margin-right: $space-4;
+        min-width: 60px;
+      }
+
+      span:not(.typeIcon):not(.time) {
+        color: $label-secondary;
+        margin-right: $space-4;
+        font-size: $text-footnote;
+      }
+    }
+  }
+}
+
+:deep(.el-card__header) {
+  border-bottom: none;
+}
+</style>

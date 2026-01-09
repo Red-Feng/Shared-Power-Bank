@@ -8,7 +8,7 @@
             clearable/>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="showChart">查询</el-button>
+        <!-- <el-button type="primary" icon="Search" @click="showChart">查询</el-button> -->
         <el-button type="success" icon="DataAnalysis" @click="generateChartDirectly">直接生成图表</el-button>
       </el-form-item>
     </el-form>
@@ -252,8 +252,12 @@ export default {
             this.xData = xData;
             this.yData = yData;
             this.title = chartTitle;
-            this.setChartData();
-            this.$message.success('图表已生成（模拟数据）');
+            
+            // 延迟1秒显示
+            setTimeout(() => {
+                this.setChartData();
+                this.$message.success('图表已生成');
+            }, 1000);
         },
         
         // 初始化图表数据（通过API）

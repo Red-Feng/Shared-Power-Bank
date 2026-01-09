@@ -2,14 +2,6 @@
   <div class="chat-layout">
     <div class="history-panel">
       <button class="add-chat-btn" @click="addChat">+ 新增对话</button>
-      <!-- AI类型选择 -->
-      <div class="ai-type-selector">
-        <div class="history-title">AI类型</div>
-        <el-radio-group v-model="aiType" size="small" @change="onAiTypeChange">
-          <el-radio label="ollama">Ollama</el-radio>
-          <el-radio label="dify">Dify</el-radio>
-        </el-radio-group>
-      </div>
       <!-- 这里放历史记录内容 -->
       <div class="history-title">历史记录</div>
       <!-- 可用 v-for 渲染历史会话列表 -->
@@ -43,7 +35,7 @@
             <span class="role">
               <template v-if="message.role === 'user'"></template>
               <template v-else>
-                <img src="../../assets/logo/logo.png" alt="AI Logo" class="ai-logo" />
+                <img src="@/assets/logo/logo.png" alt="AI Logo" class="ai-logo" />
               </template>
             </span>
             <span class="content" v-if="message.role === 'user'">{{ message.content }}</span>
@@ -69,9 +61,8 @@
 
 <script setup>
 import { ref, nextTick, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
 import { useDark } from '@vueuse/core'
-import { sendChatMessage, sendDifyChatMessage, getChatHistoryIds, getChatHistoryDetail, deleteChatHistory } from '@/api/ai/ai'
+import { sendChatMessage, getChatHistoryIds, getChatHistoryDetail, deleteChatHistory } from '@/api/nursing/ai'
 import { marked } from 'marked'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/github.css'
@@ -86,7 +77,6 @@ marked.setOptions({
   }
 })
 
-const route = useRoute()
 const isDark = useDark()
 const messagesRef = ref(null)
 const inputRef = ref(null)
@@ -95,10 +85,6 @@ const isStreaming = ref(false)
 const messages = ref([])
 const currentChatId = ref(null) // 新对话时为null
 const isNewChat = ref(true) // 标识是否为新对话
-// 根据路由名称设置默认AI类型：DifyRag路由默认使用dify，其他路由默认使用ollama
-const aiType = ref(route.name === 'DifyRag' ? 'dify' : 'ollama') // AI类型：ollama 或 dify
-const difyConversationId = ref(null) // Dify会话ID
-const difyUserId = ref('user-' + Date.now()) // Dify用户ID
 
 const historyList = ref([])
 
@@ -146,7 +132,6 @@ onMounted(async () => {
 const addChat = () => {
   // 新对话不生成任何ID，直接设为null
   currentChatId.value = null
-  difyConversationId.value = null
   isNewChat.value = true
   historyList.value.unshift({ id: null, name: '新会话' })
   messages.value = []
@@ -172,15 +157,6 @@ const scrollToBottom = async () => {
   }
 }
 
-// AI类型切换
-const onAiTypeChange = () => {
-  // 切换AI类型时，清空当前会话
-  messages.value = []
-  difyConversationId.value = null
-  currentChatId.value = null
-  isNewChat.value = true
-}
-
 const sendMessage = async () => {
   if (isStreaming.value) return
   if (!userInput.value.trim()) return
@@ -188,331 +164,69 @@ const sendMessage = async () => {
   messages.value.push({ role: 'user', content: prompt })
   userInput.value = ''
   await scrollToBottom()
-  const aiMsg = { role: 'assistant', content: '思考中...' }
+  const aiMsg = { role: 'assistant', content: '' }
   messages.value.push(aiMsg)
   isStreaming.value = true
-  
   try {
-    if (aiType.value === 'dify') {
-      // 使用Dify
-      await sendDifyMessage(prompt)
-    } else {
-      // 使用Ollama
-      await sendOllamaMessage(prompt)
+    // 只有历史对话才传chatId，新对话传null
+    const chatId = isNewChat.value ? null : currentChatId.value
+    const response = await sendChatMessage({ prompt, chatId })
+    if (!response.body) throw new Error('无流式响应')
+    
+    // 检查响应头中是否包含新的会话ID（新对话时）
+    if (isNewChat.value) {
+      // 调试：打印所有响应头
+      console.log('响应头信息:', response.headers)
+      const newChatId = response.headers.get('X-Chat-Id') || response.headers.get('chat-id') || response.headers.get('Chat-Id')
+      console.log('尝试获取的会话ID:', newChatId)
+      if (newChatId) {
+        currentChatId.value = newChatId
+        // 更新历史列表中对应的项
+        const newChatItem = historyList.value.find(item => item.id === null)
+        if (newChatItem) {
+          newChatItem.id = newChatId
+        }
+        console.log('成功设置会话ID:', newChatId)
+      } else {
+        console.log('未在响应头中找到会话ID')
+      }
     }
+    
+    const reader = response.body.getReader()
+    const decoder = new TextDecoder('utf-8')
+    let accumulated = ''
+
+    while (true) {
+      try {
+        const { value, done } = await reader.read()
+        if (done) break
+        
+        // 累积新内容
+        accumulated += decoder.decode(value)  // 追加新内容
+        
+        await nextTick(() => {
+          // 更新消息，使用累积的内容
+          const updatedMessage = {
+            content: accumulated  // 使用累积的内容
+          }
+          const lastIndex = messages.value.length - 1
+          messages.value.splice(lastIndex, 1, updatedMessage)
+        })
+        await scrollToBottom()
+      } catch (readError) {
+        console.error('读取流错误:', readError)
+        break
+      }
+    }
+
   } catch (e) {
-    console.error('发送消息失败:', e)
     aiMsg.content = '抱歉，发生了错误，请稍后重试。'
   } finally {
     isStreaming.value = false
     await scrollToBottom()
+    
+    // 会话结束后，刷新历史列表（异步执行，不阻塞UI）
     refreshHistoryList()
-  }
-}
-
-// 发送Ollama消息
-const sendOllamaMessage = async (prompt) => {
-  const chatId = isNewChat.value ? null : currentChatId.value
-  const response = await sendChatMessage({ prompt, chatId })
-  if (!response.body) throw new Error('无流式响应')
-  
-  const reader = response.body.getReader()
-  const decoder = new TextDecoder('utf-8')
-  let buffer = ''
-  let accumulated = ''
-  let chatIdReceived = false
-
-  while (true) {
-    try {
-      const { value, done } = await reader.read()
-      if (done) break
-      
-      buffer += decoder.decode(value, { stream: true })
-      const lines = buffer.split('\n')
-      buffer = lines.pop() || ''
-      
-      for (const line of lines) {
-        if (line.trim() === '') continue
-        
-        if (line.startsWith('event:')) {
-          const eventType = line.substring(6).trim()
-          if (eventType === 'chat-id') {
-            chatIdReceived = true
-            continue
-          }
-        } else if (line.startsWith('data:')) {
-          const data = line.substring(5).trim()
-          
-          if (chatIdReceived && data.startsWith('chat_')) {
-            const newChatId = data
-            if (isNewChat.value && newChatId) {
-              currentChatId.value = newChatId
-              const newChatItem = historyList.value.find(item => item.id === null)
-              if (newChatItem) {
-                newChatItem.id = newChatId
-              }
-            }
-            chatIdReceived = false
-            continue
-          }
-          
-            if (data && !data.startsWith('chat_')) {
-            accumulated += data
-            await nextTick(() => {
-              // 同样应用过滤逻辑，防止 Ollama 模型输出 think 内容
-              const filteredContent = filterReasoningTags(accumulated)
-              const updatedMessage = {
-                role: 'assistant',
-                content: filteredContent || '思考中...'
-              }
-              const lastIndex = messages.value.length - 1
-              if (lastIndex >= 0) {
-                messages.value.splice(lastIndex, 1, updatedMessage)
-              }
-            })
-            await scrollToBottom()
-          }
-        } else if (line.trim() !== '') {
-          accumulated += line
-          await nextTick(() => {
-            const filteredContent = filterReasoningTags(accumulated)
-            const updatedMessage = {
-              role: 'assistant',
-              content: filteredContent || '思考中...'
-            }
-            const lastIndex = messages.value.length - 1
-            if (lastIndex >= 0) {
-              messages.value.splice(lastIndex, 1, updatedMessage)
-            }
-          })
-          await scrollToBottom()
-        }
-      }
-    } catch (readError) {
-      console.error('读取流错误:', readError)
-      break
-    }
-  }
-  
-  if (buffer.trim()) {
-    accumulated += buffer
-    await nextTick(() => {
-      const filteredContent = filterReasoningTags(accumulated)
-      const updatedMessage = {
-        role: 'assistant',
-        content: filteredContent || '思考中...'
-      }
-      const lastIndex = messages.value.length - 1
-      if (lastIndex >= 0) {
-        messages.value.splice(lastIndex, 1, updatedMessage)
-      }
-    })
-  }
-}
-
-/**
- * 过滤AI回复中的思考过程标签
- * 用于移除Dify返回的answer中包含的<think>、<reasoning>等标签及其内容
- * @param {string} text - 原始AI回复文本
- * @returns {string} - 过滤后的纯文本回复
- */
-const filterReasoningTags = (text) => {
-  if (!text || typeof text !== "string") {
-    return text;
-  }
-  
-  let filteredText = text;
-  
-  // 1. 彻底移除已闭合的思考标签
-  filteredText = filteredText.replace(/<think>[\s\S]*?<\/think>/gi, "");
-  filteredText = filteredText.replace(/<think>[\s\S]*?<\/redacted_reasoning>/gi, "");
-  filteredText = filteredText.replace(/<reasoning>[\s\S]*?<\/reasoning>/gi, "");
-  filteredText = filteredText.replace(/<(?:thinking|thought|internal)[^>]*>[\s\S]*?<\/(?:thinking|thought|internal)>/gi, "");
-  
-  // 2. 特别处理：流式输出中尚未闭合的标签（解决正在“思考”时内容外泄的问题）
-  // 如果文本中包含 <think> 但没有匹配的 </think>，则移除从 <think> 开始的所有内容
-  if (filteredText.toLowerCase().includes('<think>')) {
-    filteredText = filteredText.replace(/<think>[\s\S]*$/gi, "");
-  }
-  if (filteredText.toLowerCase().includes('<reasoning>')) {
-    filteredText = filteredText.replace(/<reasoning>[\s\S]*$/gi, "");
-  }
-
-  // 3. 清理多余的空白字符
-  filteredText = filteredText.replace(/\n{3,}/g, "\n\n");
-  filteredText = filteredText.replace(/[ \t]{2,}/g, " ");
-  
-  return filteredText.trim();
-}
-
-// 发送Dify消息
-const sendDifyMessage = async (prompt) => {
-  const response = await sendDifyChatMessage({
-    prompt,
-    conversationId: difyConversationId.value,
-    userId: difyUserId.value
-  })
-  
-  if (!response.body) throw new Error('无流式响应')
-  
-  const reader = response.body.getReader()
-  const decoder = new TextDecoder('utf-8')
-  let buffer = ''
-  let accumulated = ''
-
-  while (true) {
-    try {
-      const { value, done } = await reader.read()
-      if (done) break
-      
-      buffer += decoder.decode(value, { stream: true })
-      
-      // 处理SSE格式的数据（每行一个data:）
-      const lines = buffer.split('\n')
-      buffer = lines.pop() || '' // 保留最后不完整的行
-      
-      for (const line of lines) {
-        const trimmedLine = line.trim()
-        if (trimmedLine === '') continue
-        
-        // Dify格式: data: {"event": "message", "answer": "chunk", ...}
-        if (trimmedLine.startsWith('data:')) {
-          // 去掉 "data: " 前缀（注意可能有空格）
-          let jsonStr = trimmedLine.substring(5).trim()
-          
-          // 如果还有 "data: " 前缀（可能是后端重复添加了），继续去掉
-          while (jsonStr.startsWith('data:')) {
-            jsonStr = jsonStr.substring(5).trim()
-          }
-          
-          if (!jsonStr) continue
-          
-          try {
-            const data = JSON.parse(jsonStr)
-            
-            // 处理message事件
-            if (data.event === 'message' && data.answer) {
-              accumulated += data.answer
-              
-              // 更新conversation_id
-              if (data.conversation_id && !difyConversationId.value) {
-                difyConversationId.value = data.conversation_id
-              }
-              
-              await nextTick(() => {
-                // 过滤思考过程标签
-                const filteredContent = filterReasoningTags(accumulated)
-                const updatedMessage = {
-                  role: 'assistant',
-                  content: filteredContent || '思考中...'
-                }
-                const lastIndex = messages.value.length - 1
-                if (lastIndex >= 0) {
-                  messages.value.splice(lastIndex, 1, updatedMessage)
-                }
-              })
-              await scrollToBottom()
-            }
-            
-            // 处理message_end事件
-            if (data.event === 'message_end') {
-              if (data.conversation_id) {
-                difyConversationId.value = data.conversation_id
-              }
-              // 流式结束，退出循环
-              return
-            }
-            
-            // 处理error事件
-            if (data.event === 'error') {
-              const errorMsg = data.message || 'Dify API错误'
-              console.error('Dify API错误:', errorMsg)
-              // 显示错误信息给用户
-              await nextTick(() => {
-                const updatedMessage = {
-                  role: 'assistant',
-                  content: `❌ 错误: ${errorMsg}\n\n请检查：\n1. Dify API Key 是否正确配置\n2. Dify 服务是否正常运行\n3. 网络连接是否正常`
-                }
-                const lastIndex = messages.value.length - 1
-                if (lastIndex >= 0) {
-                  messages.value.splice(lastIndex, 1, updatedMessage)
-                }
-              })
-              return
-            }
-            
-            // 忽略其他事件（workflow_started, node_started等）
-          } catch (parseError) {
-            // JSON解析失败，记录详细信息用于调试
-            console.error('解析Dify响应失败:', {
-              error: parseError.message,
-              rawLine: trimmedLine.substring(0, 200),
-              extractedJson: jsonStr ? jsonStr.substring(0, 200) : 'empty'
-            })
-            
-            // 如果是错误消息，尝试手动提取
-            if (trimmedLine.includes('"event":"error"')) {
-              try {
-                // 尝试找到JSON部分
-                const jsonMatch = trimmedLine.match(/\{.*\}/)
-                if (jsonMatch) {
-                  const errorData = JSON.parse(jsonMatch[0])
-                  if (errorData.event === 'error') {
-                    await nextTick(() => {
-                      const updatedMessage = {
-                        role: 'assistant',
-                        content: `❌ 错误: ${errorData.message || '未知错误'}\n\n请检查：\n1. Dify API Key 是否正确配置\n2. Dify 服务是否正常运行\n3. 网络连接是否正常`
-                      }
-                      const lastIndex = messages.value.length - 1
-                      if (lastIndex >= 0) {
-                        messages.value.splice(lastIndex, 1, updatedMessage)
-                      }
-                    })
-                    return
-                  }
-                }
-              } catch (e) {
-                // 如果还是解析失败，显示原始错误
-                console.error('无法解析错误消息:', e)
-              }
-            }
-          }
-        }
-      }
-    } catch (readError) {
-      console.error('读取Dify流错误:', readError)
-      break
-    }
-  }
-  
-  // 处理剩余数据
-  if (buffer.trim()) {
-    const line = buffer.trim()
-    if (line.startsWith('data:')) {
-      const jsonStr = line.substring(5).trim()
-      if (jsonStr) {
-        try {
-          const data = JSON.parse(jsonStr)
-          if (data.event === 'message' && data.answer) {
-            accumulated += data.answer
-            await nextTick(() => {
-              // 过滤思考过程标签
-              const filteredContent = filterReasoningTags(accumulated)
-              const updatedMessage = {
-                role: 'assistant',
-                content: filteredContent || '思考中...'
-              }
-              const lastIndex = messages.value.length - 1
-              if (lastIndex >= 0) {
-                messages.value.splice(lastIndex, 1, updatedMessage)
-              }
-            })
-          }
-        } catch (e) {
-          // 忽略解析错误
-        }
-      }
-    }
   }
 }
 
@@ -663,16 +377,6 @@ const handleDelete = async (chatId) => {
   margin-bottom: 1.5rem;
 }
 
-.ai-type-selector {
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.ai-type-selector .history-title {
-  margin-bottom: 0.75rem;
-}
-
 .history-list {
   list-style: none;
   padding: 0;
@@ -813,7 +517,10 @@ textarea {
   font-size:16px;
   line-height:26px;
 }
-/* .dark .input-area 样式已合并到上方 */
+.dark .input-area {
+  /* background: #181818;
+  border-top: 1px solid #333; */
+}
 .dark textarea {
   background: #f3f3f3;
   color: #000;
@@ -863,7 +570,7 @@ font-size:16px;
 }
 </style>
 <style>
-@import '../../../node_modules/highlight.js/styles/github.css';
+@import 'highlight.js/styles/github.css';
 .preview-content pre {
   background: #f6f8fa;
   padding: 1em;
