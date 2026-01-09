@@ -116,15 +116,13 @@ import {
   SERVE_NUM_C,
   STAFF_NUM_A,
   STAFF_NUM_B,
-  STAFF_NUM_C
-} from '../constants'
-import {
+  STAFF_NUM_C,
   getBedPieChartDataSet,
   getMoneyPieChartDataSet,
   getOldPieChartDataSet,
   getservePieChartDataSet,
   getStaffPieChartDataSet
-} from '../index1'
+} from '../utils'
 
 echarts.use([
   TooltipComponent,
@@ -252,17 +250,183 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+@import "../styles/apple-hig-variables.scss";
+
+.top-row {
+  align-items: flex-start;
+  margin-bottom: $space-4;
+}
+
 .top-panel-card {
-  // 减小上下内边距，缩短整体高度
-  :deep(.el-card__body) {
-    padding: 4px 20px 1px;
+  @include apple-card;
+  height: 100%;
+}
+
+.dataCon {
+  display: flex;
+  padding-top: $space-3;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.dashboard-chart-container {
+  width: 150px;
+  height: 150px;
+  margin: 0 auto;
+}
+
+.user-card {
+  @include apple-card;
+  background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(242,242,247,0.8) 100%);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, rgba(0,122,255,0.05) 0%, transparent 70%);
+    z-index: 0;
   }
 }
 
-// 右侧个人信息卡：与左侧数据概览的 el-card__body 对齐
-.user-card {
-  :deep(.el-card__body) {
-    padding: 4px 20px 10px;
+.roleCon {
+  position: relative;
+  z-index: 1;
+  padding-top: $space-1;
+
+  .head {
+    display: flex;
+    padding: $space-2 0;
+    align-items: center;
+
+    .img {
+      width: 42px;
+      height: 42px;
+      margin-right: $space-2;
+      
+      img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+    }
+
+    .rText {
+      p {
+        margin: 0;
+        line-height: 1.4;
+        
+        &:first-child {
+          font-size: $text-headline;
+          font-weight: $font-weight-bold;
+          color: $label-primary;
+        }
+        &:last-child {
+          font-size: $text-subhead;
+          color: $label-secondary;
+        }
+      }
+    }
   }
+
+  .userInfo {
+    margin: $space-4 0;
+    padding: $space-3;
+    background: rgba(255,255,255,0.5);
+    border-radius: $radius-lg;
+    backdrop-filter: blur(10px);
+    border: 0.5px solid rgba(0,0,0,0.03);
+
+    p {
+      display: flex;
+      align-items: center;
+      font-size: $text-subhead;
+      color: $label-secondary;
+      margin: $space-2 0;
+      gap: $space-2;
+
+      i {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        background-size: contain;
+        background-repeat: no-repeat;
+        opacity: 0.6;
+        
+        &.icon3 { background-image: url("@/assets/icons/dept.svg"); }
+        &.icon4 { background-image: url("@/assets/icons/role.svg"); }
+      }
+    }
+  }
+
+  .hFoot {
+    margin-top: $space-5;
+
+    .fTit {
+      font-size: $text-footnote;
+      font-weight: $font-weight-semibold;
+      color: $label-tertiary;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: $space-3;
+    }
+
+    .imgItem {
+      display: flex;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+      align-items: center;
+
+      li {
+        margin-right: -10px;
+        transition: transform $duration-fast $ease-out;
+
+        &:hover {
+          transform: translateY(-4px) scale(1.1);
+          z-index: 10;
+        }
+
+        span {
+          display: flex;
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          border: 2px solid $bg-primary;
+          overflow: hidden;
+          background: $system-gray6;
+          align-items: center;
+          justify-content: center;
+          box-shadow: $shadow-sm;
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+        }
+
+        &:last-child {
+          margin-right: 0;
+          span {
+            background: $system-gray5;
+            color: $label-secondary;
+            font-size: 11px;
+            font-weight: $font-weight-bold;
+          }
+        }
+      }
+    }
+  }
+}
+
+:deep(.el-card__header) {
+  border-bottom: none;
+  padding-bottom: 0;
 }
 </style>

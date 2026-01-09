@@ -27,18 +27,13 @@
               @click="handleAdd"
           >新增</el-button>
         </el-col>
-        <el-col :span="1.5">
-          <el-button
-              type="success"
-              plain
-              icon="Edit"
-          >修改</el-button>
-        </el-col>
+
         <el-col :span="1.5">
           <el-button
               type="danger"
               plain
               icon="Delete"
+              :disabled="multiple"
               @click="handleDelete"
           >删除</el-button>
         </el-col>
@@ -83,6 +78,18 @@
       <el-form ref="powerBankRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="编号" prop="powerBankNo">
           <el-input v-model="form.powerBankNo" placeholder="请输入充电宝编号" />
+        </el-form-item>
+        <el-form-item label="电量" prop="electricity">
+          <el-input-number v-model="form.electricity" :min="0" :max="100" placeholder="请输入电量" />
+        </el-form-item>
+        <el-form-item label="状态" prop="status">
+          <el-select v-model="form.status" placeholder="请选择状态">
+            <el-option label="未投放" value="0" />
+            <el-option label="可用" value="1" />
+            <el-option label="已租用" value="2" />
+            <el-option label="充电中" value="3" />
+            <el-option label="故障" value="4" />
+          </el-select>
         </el-form-item>
         <el-form-item label="描述" prop="description">
           <el-input v-model="form.description" type="textarea" placeholder="请输入内容" />
@@ -132,6 +139,8 @@
     // 多选框选中数据
     function handleSelectionChange(selection) {
         ids.value = selection.map(item => item.id);
+        single.value = selection.length != 1;
+        multiple.value = !selection.length;
     }
 
     // 删除按钮操作
@@ -150,9 +159,12 @@
     function reset() {
         form.value = {
             id: null,
-            name: null
+            powerBankNo: null,
+            electricity: null,
+            status: null,
+            description: null
         };
-        proxy.resetForm("productUnitRef");
+        proxy.resetForm("powerBankRef");
     }
     //弹框
     function handleAdd() {
@@ -162,32 +174,37 @@
 
     //确定方法
     function submitForm() {
-        if(form.value.id != null) {
-            //修改
-            updatePowerBank(form.value).then(response => {
-                proxy.$modal.msgSuccess("修改成功");
-                open.value = false;
-                getList();
-            })
+        proxy.$refs["powerBankRef"].validate(valid => {
+            if (valid) {
+                if (form.value.id != null) {
+                    updatePowerBank(form.value).then(response => {
+                        proxy.$modal.msgSuccess("修改成功");
+                        open.value = false;
+                        getList();
+                    });
+                } else {
+                    addPowerBank(form.value).then(response => {
+                        proxy.$modal.msgSuccess("新增成功");
+                        open.value = false;
+                        getList();
+                    });
+                }
+            }
+        });
+    }
 
-        } else { //添加
-            addPowerBank(form.value).then(response => {
-                //提示
-                //关闭弹框
-                //刷新页面
-                proxy.$modal.msgSuccess("新增成功");
-                open.value = false;
-                getList();
-            })
-        }
+    // 取消按钮
+    function cancel() {
+        open.value = false;
+        reset();
     }
     //===============修改===============================
     function handleUpdate(row) {
-        const pid = row.id
+        const pid = row.id || ids.value
         getPowerBank(pid).then(response => {
             form.value = response.data;
             open.value = true;
-            title.value = "修改商品单位";
+            title.value = "修改充电宝";
         })
     }
     //===============分页列表===========================

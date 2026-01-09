@@ -256,12 +256,14 @@ const sendOllamaMessage = async (prompt) => {
             continue
           }
           
-          if (data && !data.startsWith('chat_')) {
+            if (data && !data.startsWith('chat_')) {
             accumulated += data
             await nextTick(() => {
+              // 同样应用过滤逻辑，防止 Ollama 模型输出 think 内容
+              const filteredContent = filterReasoningTags(accumulated)
               const updatedMessage = {
                 role: 'assistant',
-                content: accumulated || '思考中...'
+                content: filteredContent || '思考中...'
               }
               const lastIndex = messages.value.length - 1
               if (lastIndex >= 0) {
@@ -273,9 +275,10 @@ const sendOllamaMessage = async (prompt) => {
         } else if (line.trim() !== '') {
           accumulated += line
           await nextTick(() => {
+            const filteredContent = filterReasoningTags(accumulated)
             const updatedMessage = {
               role: 'assistant',
-              content: accumulated || '思考中...'
+              content: filteredContent || '思考中...'
             }
             const lastIndex = messages.value.length - 1
             if (lastIndex >= 0) {
@@ -294,9 +297,10 @@ const sendOllamaMessage = async (prompt) => {
   if (buffer.trim()) {
     accumulated += buffer
     await nextTick(() => {
+      const filteredContent = filterReasoningTags(accumulated)
       const updatedMessage = {
         role: 'assistant',
-        content: accumulated || '思考中...'
+        content: filteredContent || '思考中...'
       }
       const lastIndex = messages.value.length - 1
       if (lastIndex >= 0) {
@@ -319,28 +323,26 @@ const filterReasoningTags = (text) => {
   
   let filteredText = text;
   
-  // 移除 <think>...</think> 标签及其内容(不区分大小写,支持多行)
-  // 使用 [\s\S] 匹配包括换行符在内的所有字符
+  // 1. 彻底移除已闭合的思考标签
   filteredText = filteredText.replace(/<think>[\s\S]*?<\/think>/gi, "");
-  
-  // 移除 <think>...</think> 标签及其内容
-  // 这是Dify常见的思考过程标签格式(用户反馈的问题标签)
   filteredText = filteredText.replace(/<think>[\s\S]*?<\/redacted_reasoning>/gi, "");
-  
-  // 移除 <reasoning>...</reasoning> 标签及其内容
   filteredText = filteredText.replace(/<reasoning>[\s\S]*?<\/reasoning>/gi, "");
-  
-  // 移除其他可能的思考过程标签格式(如<thinking>、<thought>等)
   filteredText = filteredText.replace(/<(?:thinking|thought|internal)[^>]*>[\s\S]*?<\/(?:thinking|thought|internal)>/gi, "");
   
-  // 清理多余的空白字符(多个连续换行或空格)
-  filteredText = filteredText.replace(/\n{3,}/g, "\n\n"); //多个换行保留为两个
-  filteredText = filteredText.replace(/[ \t]{2,}/g, " "); // 多个空格保留为一个
+  // 2. 特别处理：流式输出中尚未闭合的标签（解决正在“思考”时内容外泄的问题）
+  // 如果文本中包含 <think> 但没有匹配的 </think>，则移除从 <think> 开始的所有内容
+  if (filteredText.toLowerCase().includes('<think>')) {
+    filteredText = filteredText.replace(/<think>[\s\S]*$/gi, "");
+  }
+  if (filteredText.toLowerCase().includes('<reasoning>')) {
+    filteredText = filteredText.replace(/<reasoning>[\s\S]*$/gi, "");
+  }
+
+  // 3. 清理多余的空白字符
+  filteredText = filteredText.replace(/\n{3,}/g, "\n\n");
+  filteredText = filteredText.replace(/[ \t]{2,}/g, " ");
   
-  // 去除首尾空白
-  filteredText = filteredText.trim();
-  
-  return filteredText;
+  return filteredText.trim();
 }
 
 // 发送Dify消息

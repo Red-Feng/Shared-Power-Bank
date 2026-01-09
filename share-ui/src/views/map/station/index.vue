@@ -62,6 +62,7 @@ import { calculateLatLng } from "@/api/device/map";
 import { nearbyStation } from "@/api/device/station";
 import { ElMessage } from 'element-plus';
 import mapImage from "@/assets/images/map.png";
+import wuhanMapImage from "@/assets/images/wuhan.png";
 const { proxy } = getCurrentInstance();
 
 let map;
@@ -70,6 +71,7 @@ const keyword = ref("");
 const isOfflineMode = ref(false);
 const offlineStations = ref([]);
 const offlineMapCanvas = ref(null);
+const currentMapImage = ref(mapImage);
 
 // 离线地图状态
 const offlineMapState = ref({
@@ -117,6 +119,12 @@ function search() {
   if(keyword.value == '') return;
   
   if (isOfflineMode.value) {
+    if (keyword.value === '武汉') {
+       currentMapImage.value = wuhanMapImage;
+       initOfflineMap();
+       ElMessage.success('已切换到武汉地图');
+       return;
+    }
     ElMessage.warning('离线模式下无法使用搜索功能');
     return;
   }
@@ -236,7 +244,7 @@ function initOfflineMap() {
     mapImageLoaded.value = false;
     drawOfflineMap(); // 即使图片加载失败也绘制站点
   };
-  img.src = mapImage;
+  img.src = currentMapImage.value;
   
   // 监听窗口大小变化
   window.addEventListener('resize', handleResize);

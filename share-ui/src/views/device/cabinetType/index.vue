@@ -27,13 +27,7 @@
             v-hasPermi="['device:cabinetType:add']"
         >新增</el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-            type="success"
-            plain
-            icon="Edit"
-        >修改</el-button>
-      </el-col>
+
       <el-col :span="1.5">
         <el-button
             type="danger"
@@ -135,6 +129,7 @@
     //封装表单数据
     form:{}
   })
+  const cabinetTypeRef = ref(null);
   //转换普通对象
   const { queryParams,form } = toRefs(data);
   //定义批量操作id列表模型
@@ -147,8 +142,8 @@
   ///////////////////==删除==////////////////////////////////////
   function handleSelectionChange(selection) {
     ids.value = selection.map(item => item.id);
-    // single.value = selection.length != 1;
-    // multiple.value = !selection.length;
+    single.value = selection.length != 1;
+    multiple.value = !selection.length;
 
   }
   function handleDelete(row) {
@@ -170,7 +165,7 @@
   function handleUpdate(row) {
     reset()
     //获取修改数据id值
-    const cid = row.id
+    const cid = row.id || ids.value
     //调用方法
     getCabinetType(cid).then(response => {
       //得到接口返回数据
@@ -189,28 +184,32 @@
   }
 
   //添加方法
+  //添加方法
   function submitForm() {
-    //判断添加还是修改
-    if(form.value.id != null) {//修改
-      updateCabinetType(form.value).then(response => {
-        //提示
-        ElMessage.success("修改成功")
-        //关闭弹框
-        open.value = false
-        //刷新页面
-        getList()
-      })
-    } else { //添加
-      addCabinetType(form.value).then(response => {
-        //提示
-        ElMessage.success("新增成功")
-        //关闭弹框
-        open.value = false
-        //刷新页面
-        getList()
-      })
-    }
-
+    cabinetTypeRef.value.validate(valid => {
+      if (valid) {
+        //判断添加还是修改
+        if(form.value.id != null) {//修改
+          updateCabinetType(form.value).then(response => {
+            //提示
+            ElMessage.success("修改成功")
+            //关闭弹框
+            open.value = false
+            //刷新页面
+            getList()
+          })
+        } else { //添加
+          addCabinetType(form.value).then(response => {
+            //提示
+            ElMessage.success("新增成功")
+            //关闭弹框
+            open.value = false
+            //刷新页面
+            getList()
+          })
+        }
+      }
+    });
   }
 
   // 表单重置
@@ -223,6 +222,7 @@
       status: null,
       remark: null
     };
+    cabinetTypeRef.value?.resetFields();
   }
 
   // 取消按钮

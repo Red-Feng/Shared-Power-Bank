@@ -180,24 +180,24 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="昵称">
-              {{ form.userInfoVo.nickname }}
+              {{ form.userInfoVo?.nickname }}
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="微信标识">
-              {{ form.userInfoVo.wxOpenId }}
+              {{ form.userInfoVo?.wxOpenId }}
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="注册时间">
-              {{ form.userInfoVo.createTime }}
+              {{ form.userInfoVo?.createTime }}
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="最近登录时间">
-              {{ form.userInfoVo.lastLoginTime }}
+              {{ form.userInfoVo?.lastLoginTime }}
             </el-form-item>
           </el-col>
         </el-row>
@@ -276,6 +276,12 @@ function cancel() {
   reset();
 }
 
+// 表单重置
+function reset() {
+  form.value = {};
+  proxy.resetForm("orderInfoRef");
+}
+
 
 /** 搜索按钮操作 */
 function handleQuery() {
@@ -294,8 +300,13 @@ function handleShow(id) {
   getOrderInfo(id).then(response => {
     form.value = response.data;
     open.value = true;
-    title.value = "修改订单";
+    title.value = "订单详情";
   });
+}
+
+/** 提交按钮 */
+function submitForm() {
+  open.value = false;
 }
 
 /** 导出按钮操作 */

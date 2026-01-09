@@ -1,0 +1,209 @@
+app:
+  description: ''
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  mode: advanced-chat
+  name: Echarts文档解析ai可视化数据
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/ollama:0.1.0@7c18c74b94a855de83aa66f376939d47b96a49b6dbb6904b46b267cb0213396e
+    version: null
+kind: app
+version: 0.4.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - document
+      allowed_file_upload_methods:
+      - remote_url
+      - local_file
+      enabled: true
+      fileUploadConfig:
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        image_file_size_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: answer
+      id: 1766914130227-source-1766914715337-target
+      source: '1766914130227'
+      sourceHandle: source
+      target: '1766914715337'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: start
+        targetType: document-extractor
+      id: 1766914049193-source-1766914101175-target
+      source: '1766914049193'
+      sourceHandle: source
+      target: '1766914101175'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: document-extractor
+        targetType: code
+      id: 1766914101175-source-1766914130227-target
+      source: '1766914101175'
+      sourceHandle: source
+      target: '1766914130227'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        selected: false
+        title: 开始
+        type: start
+        variables: []
+      height: 51
+      id: '1766914049193'
+      position:
+        x: -1187.5673018666882
+        y: 102.05240563481541
+      positionAbsolute:
+        x: -1187.5673018666882
+        y: 102.05240563481541
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+
+    - data:
+        is_array_file: true
+        selected: false
+        title: 文档提取器
+        type: document-extractor
+        variable_selector:
+        - sys
+        - files
+      height: 92
+      id: '1766914101175'
+      position:
+        x: -828.1170910436421
+        y: 240.0894377685981
+      positionAbsolute:
+        x: -828.1170910436421
+        y: 240.0894377685981
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+
+    - data:
+        code: "import json\nimport re\n\ndef main(csv_string):\n    # 1. 提取原始字符串并清洗符号\n\
+          \    if isinstance(csv_string, list):\n        csv_string = csv_string[0]\n\
+          \    # 去除|、\\n转义符、多余空格\n    cleaned = re.sub(r'[|\\\\n]', '', csv_string).replace('--',\
+          \ '').strip()\n    \n    # 2. 按“产品”拆分数据（表头+4个产品）\n    parts = re.split(r'(?=产品)',\
+          \ cleaned)  # 按“产品”开头拆分\n    header = parts[0].split()  # 表头：产品、1月、2月...\n\
+          \    product_data = []\n    for p in parts[1:]:  # 产品A、B、C、D\n        cols\
+          \ = p.split()\n        if len(cols) >= 2:\n            product_data.append(cols)\n\
+          \    \n    # 3. 生成ECharts配置\n    echarts_config = {\n        \"title\":\
+          \ {\"text\": \"产品月度数据\", \"left\": \"center\"},\n        \"tooltip\": {\"\
+          trigger\": \"axis\"},\n        \"legend\": {\"data\": [p[0] for p in product_data]},\n\
+          \        \"xAxis\": {\"type\": \"category\", \"data\": header[1:]},\n  \
+          \      \"yAxis\": {\"type\": \"value\"},\n        \"series\": [\n      \
+          \      {\n                \"name\": p[0],\n                \"type\": \"\
+          bar\",\n                \"data\": [float(c) for c in p[1:]]\n          \
+          \  } for p in product_data\n        ]\n    }\n\n    output = \"```echarts\\\
+          n\" + json.dumps(echarts_config, indent=2, ensure_ascii=False) + \"\\n```\"\
+          \n    return {\"output\": output}"
+        code_language: python3
+        outputs:
+          output:
+            children: null
+            type: string
+        selected: false
+        title: 代码执行
+        type: code
+        variables:
+        - value_selector:
+          - '1766914101175'
+          - text
+          value_type: array[string]
+          variable: csv_string
+      height: 51
+      id: '1766914130227'
+      position:
+        x: -113.80449801339202
+        y: 311.37333459198635
+      positionAbsolute:
+        x: -113.80449801339202
+        y: 311.37333459198635
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: '{{#1766914130227.output#}}'
+        selected: false
+        title: 直接回复
+        type: answer
+        variables: []
+      height: 120
+      id: '1766914715337'
+      position:
+        x: -97.4189756959221
+        y: 433.59030334588294
+      positionAbsolute:
+        x: -97.4189756959221
+        y: 433.59030334588294
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+
+
+    viewport:
+      x: 762.3846047219042
+      y: 21.577525290653284
+      zoom: 0.6597539553864475
+  rag_pipeline_variables: []

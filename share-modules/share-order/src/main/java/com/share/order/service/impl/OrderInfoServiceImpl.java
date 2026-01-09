@@ -375,11 +375,14 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
                 .selectList(new LambdaQueryWrapper<OrderBill>().eq(OrderBill::getOrderId, id));
         orderInfo.setOrderBillList(orderBillList);
 
+
         R<UserInfo> userInfoR = remoteUserInfoService.getInfo(orderInfo.getUserId());
-        UserInfo userInfo = userInfoR.getData();
-        UserInfoVo userInfoVo = new UserInfoVo();
-        BeanUtils.copyProperties(userInfo,userInfoVo);
-        orderInfo.setUserInfoVo(userInfoVo);
+        if (userInfoR != null && userInfoR.getData() != null) {
+            UserInfo userInfo = userInfoR.getData();
+            UserInfoVo userInfoVo = new UserInfoVo();
+            BeanUtils.copyProperties(userInfo, userInfoVo);
+            orderInfo.setUserInfoVo(userInfoVo);
+        }
 
         //返回对象
         return orderInfo;

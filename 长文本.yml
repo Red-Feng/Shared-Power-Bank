@@ -1,0 +1,353 @@
+app:
+  description: '分段处理长文档内容的通用工具，支持上传文档并按指定指令（如翻译、总结）并行处理。'
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  mode: advanced-chat
+  name: 长文本
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/openai_api_compatible:0.0.27@f9ce3ff5e28f09931a3a7fca59add2d09590408f7e9a3d701b10c77a60249719
+    version: null
+kind: app
+version: 0.5.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      - .TXT
+      - .MD
+      - .MARKDOWN
+      - .PDF
+      - .HTML
+      - .DOCX
+      - .DOC
+      - .CSV
+      allowed_file_types:
+      - image
+      - document
+      allowed_file_upload_methods:
+      - remote_url
+      - local_file
+      enabled: true
+      fileUploadConfig:
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        image_file_batch_limit: 10
+        image_file_size_limit: 10
+        single_chunk_attachment_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInLoop: false
+        sourceType: start
+        targetType: document-extractor
+      id: 1767006426763-source-1767006634273-target
+      selected: false
+      source: '1767006426763'
+      sourceHandle: source
+      target: '1767006634273'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: document-extractor
+        targetType: code
+      id: 1767006634273-source-1767006703029-target
+      selected: false
+      source: '1767006634273'
+      sourceHandle: source
+      target: '1767006703029'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: iteration
+      id: 1767006703029-source-1767006774021-target
+      selected: false
+      source: '1767006703029'
+      sourceHandle: source
+      target: '1767006774021'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1767006774021'
+        sourceType: iteration-start
+        targetType: llm
+      id: 1767006774021start-source-1767006793266-target
+      selected: false
+      source: 1767006774021start
+      sourceHandle: source
+      target: '1767006793266'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInLoop: false
+        sourceType: iteration
+        targetType: answer
+      id: 1767006774021-source-answer-target
+      selected: false
+      source: '1767006774021'
+      sourceHandle: source
+      target: answer
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        selected: false
+        title: 用户输入
+        type: start
+        variables:
+        - label: 处理指令 (例如：翻译成中文、总结要点)
+          max_length: 256
+          options: []
+          required: true
+          type: text-input
+          variable: instruction
+      height: 81
+      id: '1767006426763'
+      position:
+        x: 0
+        y: 63
+      positionAbsolute:
+        x: 0
+        y: 63
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: '{{#1767006774021.output#}}'
+        selected: false
+        title: 直接回复
+        type: answer
+        variables: []
+      height: 101
+      id: answer
+      position:
+        x: 1612
+        y: 53
+      positionAbsolute:
+        x: 1612
+        y: 53
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        is_array_file: true
+        selected: false
+        title: 文档提取器
+        type: document-extractor
+        variable_selector:
+        - sys
+        - files
+      height: 104
+      id: '1767006634273'
+      position:
+        x: 342
+        y: 52
+      positionAbsolute:
+        x: 342
+        y: 52
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "# 参数名必须完全对应截图：file 和 text\ndef main(file: list, text: str) -> dict:\n\
+          \    full_text = \"\"\n    \n    # 1. 处理文档内容 (变量名 file)\n    if file:\n\
+          \        if isinstance(file, list):\n            # 过滤空内容并合并\n          \
+          \  valid_texts = [str(t) for t in file if t]\n            full_text += \"\
+          \\n\".join(valid_texts)\n        elif isinstance(file, str):\n         \
+          \   full_text += file\n\n    # 2. 处理用户输入 (变量名 text)\n    if text:\n    \
+          \    # 如果前面有文件内容，加换行符分隔\n        if full_text:\n            full_text +=\
+          \ \"\\n\\n\"\n        full_text += str(text)\n\n    # 3. 如果总内容为空，返回空结果\n\
+          \    if not full_text.strip():\n        return {'result': []}\n\n    # ---\
+          \ 分段逻辑 ---\n    token_limit = 2000 \n    overlap = 100 \n    chunk_size\
+          \ = int(token_limit * 6 / 4) \n\n    chunks = []\n    start_index = 0\n\
+          \    text_length = len(full_text)\n\n    while start_index < text_length:\n\
+          \        end_index = start_index + chunk_size\n        if end_index > text_length:\n\
+          \            end_index = text_length\n        \n        chunk = full_text[start_index:end_index]\n\
+          \        \n        # 过滤空段落\n        if chunk.strip():\n            chunks.append(chunk)\n\
+          \            \n        step = chunk_size - overlap\n        if step <= 0:\
+          \ step = 1\n        start_index += step\n\n    return {'result': chunks}"
+        code_language: python3
+        outputs:
+          result:
+            children: null
+            type: array[string]
+        selected: false
+        title: 代码执行
+        type: code
+        variables:
+        - value_selector:
+          - 1767006634273
+          - text
+          value_type: array[string]
+          variable: file
+        - value_selector:
+          - sys
+          - query
+          value_type: string
+          variable: text
+      height: 51
+      id: '1767006703029'
+      position:
+        x: 684
+        y: 78
+      positionAbsolute:
+        x: 684
+        y: 78
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        error_handle_mode: terminated
+        flatten_output: true
+        height: 207
+        is_parallel: false
+        iterator_input_type: array[string]
+        iterator_selector:
+        - '1767006703029'
+        - result
+        output_selector:
+        - '1767006793266'
+        - text
+        output_type: array[string]
+        parallel_nums: 10
+        selected: false
+        start_node_id: 1767006774021start
+        title: 迭代
+        type: iteration
+        width: 486
+      height: 207
+      id: '1767006774021'
+      position:
+        x: 1026
+        y: 0
+      positionAbsolute:
+        x: 1026
+        y: 0
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 486
+      zIndex: 1
+    - data:
+        desc: ''
+        isInIteration: true
+        selected: false
+        title: ''
+        type: iteration-start
+      draggable: false
+      height: 48
+      id: 1767006774021start
+      parentId: '1767006774021'
+      position:
+        x: 60
+        y: 80
+      positionAbsolute:
+        x: 1086
+        y: 80
+      selectable: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom-iteration-start
+      width: 44
+      zIndex: 1002
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1767006774021'
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: anti
+          provider: langgenius/openai_api_compatible/openai_api_compatible
+        prompt_template:
+        - id: 521ed06f-4db2-4879-a4ee-9a6fa03a2868
+          role: system
+          text: |
+            你是一个高效的文本处理助手。
+            用户的任务指令是：{{#1767006426763.instruction#}}
+            
+            请严格按照指令处理以下文本片段。如果指令为空，请默认总结该片段。
+            
+            文本片段：
+        - id: 5df59ba0-bdba-40f2-9c58-1709621d965f
+          role: user
+          text: '{{#1767006774021.item#}}'
+        selected: false
+        title: LLM 2
+        type: llm
+        vision:
+          enabled: false
+      height: 87
+      id: '1767006793266'
+      parentId: '1767006774021'
+      position:
+        x: 184
+        y: 60
+      positionAbsolute:
+        x: 1210
+        y: 60
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1002
+    viewport:
+      x: 209.93511166547154
+      y: 238.92861168919575
+      zoom: 0.609385394307287
+  rag_pipeline_variables: []
