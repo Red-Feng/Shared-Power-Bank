@@ -85,42 +85,6 @@
       </el-col>
     </el-row>
 
-    <!-- 电池模型训练分析 -->
-    <el-row :gutter="20" class="mb20">
-      <el-col :span="12">
-        <el-card shadow="never">
-          <template #header>
-            <div class="card-header">
-              <span class="card-title">损失曲线</span>
-            </div>
-          </template>
-          <div class="chart-image-container">
-            <img 
-              :src="lossImageUrl" 
-              alt="损失曲线" 
-              class="chart-image"
-              @error="handleImageError('loss')"
-            />
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :span="12">
-        <el-card shadow="never">
-          <template #header>
-            <span class="card-title">准确率曲线</span>
-          </template>
-          <div class="chart-image-container">
-            <img 
-              :src="accuracyImageUrl" 
-              alt="准确率曲线" 
-              class="chart-image"
-              @error="handleImageError('accuracy')"
-            />
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
-
     <!-- 机器学习模型分析 -->
     <el-row :gutter="20" class="mb20">
       <el-col :span="12">
@@ -258,11 +222,16 @@
                 </el-col>
               </el-row>
             </div>
-            <div class="ml-charts-container">
-               <div ref="mlLossChart" class="chart-container-small"></div>
-               <div ref="mlAccuracyChart" class="chart-container-small"></div>
-               <div ref="mlLearningRateChart" class="chart-container-small"></div>
-             </div>
+            <div class="ml-images-container">
+              <div class="ml-image-item">
+                <div class="ml-image-title">损失曲线</div>
+                <img :src="lossImageUrl" alt="损失曲线" class="ml-image" @error="handleImageError('loss')" />
+              </div>
+              <div class="ml-image-item">
+                <div class="ml-image-title">准确率曲线</div>
+                <img :src="accuracyImageUrl" alt="准确率曲线" class="ml-image" @error="handleImageError('accuracy')" />
+              </div>
+            </div>
           </div>
           <div v-else class="empty-state">
             <el-empty description="暂无训练数据" :image-size="100" />
@@ -355,14 +324,8 @@ const paginatedDataList = ref([])
 
 const healthDistributionChart = ref(null)
 const linearRegressionChart = ref(null)
-const mlLossChart = ref(null)
-const mlAccuracyChart = ref(null)
-const mlLearningRateChart = ref(null)
 let healthChartInstance = null
 let linearRegressionChartInstance = null
-let mlLossChartInstance = null
-let mlAccuracyChartInstance = null
-let mlLearningRateChartInstance = null
 
 // 图片URL - 直接使用前端 assets 目录下的图片
 import lossImage from '@/assets/images/image1.png'
@@ -464,9 +427,6 @@ const renderCharts = (data) => {
   // ML 相关图表，只有在有数据时才渲染
   if (mlModelData.linear_regression || mlModelData.ml_model) {
     renderLinearRegressionChart(data)
-    renderMLLossChart()
-    renderMLAccuracyChart()
-    renderMLLearningRateChart()
   }
 }
 
@@ -772,236 +732,6 @@ const renderLinearRegressionChart = (data) => {
   })
 }
 
-// 渲染机器学习训练损失图表
-const renderMLLossChart = () => {
-  if (!mlLossChart.value || !mlModelData.ml_model) return
-  
-  if (mlLossChartInstance) {
-    mlLossChartInstance.dispose()
-  }
-  
-  mlLossChartInstance = echarts.init(mlLossChart.value)
-  
-  const mlModel = mlModelData.ml_model
-  const trainLoss = mlModel.history?.train_loss || []
-  const testLoss = mlModel.history?.test_loss || []
-  
-  if (trainLoss.length === 0) return
-  
-  const epochs = trainLoss.map((_, index) => index + 1)
-  
-  const option = {
-    title: {
-      text: '训练与测试损失 (Loss)',
-      left: 'center',
-      textStyle: { fontSize: 14 }
-    },
-    tooltip: {
-      trigger: 'axis'
-    },
-    legend: {
-      data: ['训练损失', '测试损失'],
-      bottom: 0
-    },
-    grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '15%',
-      containLabel: true
-    },
-    xAxis: {
-      type: 'category',
-      boundaryGap: false,
-      data: epochs,
-      name: 'Epoch'
-    },
-    yAxis: {
-      type: 'value',
-      name: 'Loss'
-    },
-    series: [
-      {
-        name: '训练损失',
-        type: 'line',
-        data: trainLoss,
-        smooth: true,
-        lineStyle: { color: '#F56C6C', width: 2 },
-        areaStyle: {
-          color: {
-            type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
-            colorStops: [
-              { offset: 0, color: 'rgba(245, 108, 108, 0.3)' },
-              { offset: 1, color: 'rgba(245, 108, 108, 0.05)' }
-            ]
-          }
-        }
-      },
-      {
-        name: '测试损失',
-        type: 'line',
-        data: testLoss,
-        smooth: true,
-        lineStyle: { color: '#E6A23C', width: 2 },
-        areaStyle: {
-          color: {
-            type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
-            colorStops: [
-              { offset: 0, color: 'rgba(230, 162, 60, 0.3)' },
-              { offset: 1, color: 'rgba(230, 162, 60, 0.05)' }
-            ]
-          }
-        }
-      }
-    ]
-  }
-  
-  mlLossChartInstance.setOption(option)
-  
-  window.addEventListener('resize', () => {
-    if (mlLossChartInstance) mlLossChartInstance.resize()
-  })
-}
-
-// 渲染机器学习训练准确率图表
-const renderMLAccuracyChart = () => {
-  if (!mlAccuracyChart.value || !mlModelData.ml_model) return
-  
-  if (mlAccuracyChartInstance) {
-    mlAccuracyChartInstance.dispose()
-  }
-  
-  mlAccuracyChartInstance = echarts.init(mlAccuracyChart.value)
-  
-  const mlModel = mlModelData.ml_model
-  const trainAcc = mlModel.history?.train_accuracy || []
-  const testAcc = mlModel.history?.test_accuracy || []
-  
-  if (trainAcc.length === 0) return
-  
-  const epochs = trainAcc.map((_, index) => index + 1)
-  
-  const option = {
-    title: {
-      text: '训练与测试准确率 (R²)',
-      left: 'center',
-      textStyle: { fontSize: 14 }
-    },
-    tooltip: {
-      trigger: 'axis'
-    },
-    legend: {
-      data: ['训练准确率 (R²)', '测试准确率 (R²)'],
-      bottom: 0
-    },
-    grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '15%',
-      containLabel: true
-    },
-    xAxis: {
-      type: 'category',
-      boundaryGap: false,
-      data: epochs,
-      name: 'Epoch'
-    },
-    yAxis: {
-      type: 'value',
-      name: 'R²',
-      min: 0,
-      max: 1,
-      axisLabel: {
-        formatter: (value) => (value * 100).toFixed(0) + '%'
-      }
-    },
-    series: [
-      {
-        name: '训练准确率 (R²)',
-        type: 'line',
-        data: trainAcc,
-        smooth: true,
-        lineStyle: { color: '#67C23A', width: 2 }
-      },
-      {
-        name: '测试准确率 (R²)',
-        type: 'line',
-        data: testAcc,
-        smooth: true,
-        lineStyle: { color: '#409EFF', width: 2 }
-      }
-    ]
-  }
-  
-  mlAccuracyChartInstance.setOption(option)
-   
-   window.addEventListener('resize', () => {
-     if (mlAccuracyChartInstance) mlAccuracyChartInstance.resize()
-   })
- }
- 
- // 渲染机器学习学习率图表
- const renderMLLearningRateChart = () => {
-   if (!mlLearningRateChart.value || !mlModelData.ml_model) return
-   
-   if (mlLearningRateChartInstance) {
-     mlLearningRateChartInstance.dispose()
-   }
-   
-   mlLearningRateChartInstance = echarts.init(mlLearningRateChart.value)
-   
-   const mlModel = mlModelData.ml_model
-   const learningRate = mlModel.history?.learning_rate || []
-   
-   if (learningRate.length === 0) return
-   
-   const epochs = learningRate.map((_, index) => index + 1)
-   
-   const option = {
-     title: {
-       text: '学习率衰减 (Learning Rate)',
-       left: 'center',
-       textStyle: { fontSize: 14 }
-     },
-     tooltip: {
-       trigger: 'axis'
-     },
-     grid: {
-       left: '3%',
-       right: '4%',
-       bottom: '15%',
-       containLabel: true
-     },
-     xAxis: {
-       type: 'category',
-       boundaryGap: false,
-       data: epochs,
-       name: 'Epoch'
-     },
-     yAxis: {
-       type: 'value',
-       name: 'LR'
-     },
-     series: [
-       {
-         name: '学习率',
-         type: 'line',
-         data: learningRate,
-         step: 'end',
-         lineStyle: { color: '#909399', width: 2 },
-         areaStyle: {
-           color: 'rgba(144, 147, 153, 0.1)'
-         }
-       }
-     ]
-   }
-   
-   mlLearningRateChartInstance.setOption(option)
-   
-   window.addEventListener('resize', () => {
-     if (mlLearningRateChartInstance) mlLearningRateChartInstance.resize()
-   })
- }
-
 // 导出数据
 const exportData = () => {
   ElMessage.info('导出功能开发中...')
@@ -1085,35 +815,31 @@ onMounted(() => {
   min-height: 300px;
 }
 
-.ml-charts-container {
+.ml-images-container {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  margin-top: 20px;
 }
 
-.chart-container-small {
+.ml-image-item {
   width: 100%;
-  height: 220px;
-  min-height: 220px;
 }
 
-.chart-image-container {
+.ml-image-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #606266;
+  margin-bottom: 10px;
+  padding-left: 5px;
+  border-left: 3px solid #409EFF;
+}
+
+.ml-image {
   width: 100%;
-  height: 300px;
-  min-height: 300px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  background: #fafafa;
-}
-
-.chart-image {
-  max-width: 100%;
-  max-height: 100%;
-  width: auto;
   height: auto;
-  object-fit: contain;
+  border-radius: 4px;
+  border: 1px solid #ebeef5;
 }
 
 .chart-container-large {
